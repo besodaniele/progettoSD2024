@@ -18,44 +18,48 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-@Path("dominio")
-public class DominioResource {
-    private static Map <String, Dominio> domini=new HashMap<String,Dominio>();
-
+@Path("acquisto")
+public class AcquistoResource {
+    private static Map <String, Acquisto> acquisti=new HashMap<String,Acquisto>();
     static{
-        Dominio d1=new Dominio();
-        d1.setDominio("unimib.it");
-        d1.setDataRegistrazione(LocalDate.now());
-        d1.setDataScadenza(LocalDate.now());
-        domini.put("unimib.it", d1);
+        Acquisto a1=new Acquisto();
+        a1.setNome("Mario");
+        a1.setCognome("Rossi");
+        a1.setMail("m.rossi@gmail.com");
+        a1.setNumeroCarta("1234567890123456");
+        a1.setCvv("123");
+        a1.setNomeIntestatario("Mario");
+        a1.setCognomeIntestatario("Rossi");
+        a1.setDataScadenza(LocalDate.now());
+        acquisti.put("m.rossi@gmail.com", a1);
     }
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
-        if( domini!=null)
-            return Response.ok(domini).build();
+        if( acquisti!=null)
+            return Response.ok(acquisti).build();
         else
             return Response.status(Status.NOT_FOUND).build();
-    } 
-    @Path("/{dominio}")
+    }
+    @Path("/{mail}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDominio(@PathParam("dominio") String dominio){
-        Dominio d=domini.get(dominio);
-        if(d!=null)
-            return Response.ok(d).build();
+    public Response getAcquisto(@PathParam("mail") String mail){
+        Acquisto a=acquisti.get(mail);
+        if(a!=null)
+            return Response.ok(a).build();
         else
             return Response.status(Status.NOT_FOUND).build();
     }
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDominio(Dominio dominio){
+    public Response addAcquisto(Acquisto acquisto){
         
-        if(domini.get(dominio.getDominio())==null){
-            domini.put(dominio.getDominio(), dominio);
+        if(acquisti.get(acquisto.getMail())==null){
+            acquisti.put(acquisto.getMail(), acquisto);
             try{
-                return Response.created(new URI("http://localhost:8080/dominio/"+dominio.getDominio())).build();
+                return Response.created(new URI("http://localhost:8080/acquisto/"+acquisto.getMail())).build();
             }catch(URISyntaxException e){
                 return Response.serverError().build();
             }
@@ -66,10 +70,10 @@ public class DominioResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(Dominio dominio){
-        Dominio d=domini.get(dominio.getDominio());
-        if(d!=null){
-            domini.put(dominio.getDominio(), dominio);
+    public Response updateAcquisto(Acquisto acquisto){
+        Acquisto a=acquisti.get(acquisto.getMail());
+        if(a!=null){
+            acquisti.put(acquisto.getMail(), acquisto);
             return Response.ok().build();
         }else{
             return Response.status(Status.NOT_FOUND).build();

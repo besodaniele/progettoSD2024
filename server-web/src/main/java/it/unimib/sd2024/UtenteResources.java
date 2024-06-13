@@ -18,46 +18,47 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-@Path("dominio")
-public class DominioResource {
-    private static Map <String, Dominio> domini=new HashMap<String,Dominio>();
-
+@Path("utente")
+public class UtenteResources {
+    private static Map <String, Utente> utenti=new HashMap<String,Utente>();
     static{
-        Dominio d1=new Dominio();
-        d1.setDominio("unimib.it");
-        d1.setDataRegistrazione(LocalDate.now());
-        d1.setDataScadenza(LocalDate.now());
-        domini.put("unimib.it", d1);
+        Utente u1=new Utente();
+        u1.setNome("Mario");
+        u1.setCognome("Rossi");
+        u1.setEmail("prova@gmail.com");
+        u1.setPassword("1234");
+        utenti.put("prova@gmail.com", u1);
+
     }
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
-        if( domini!=null)
-            return Response.ok(domini).build();
+        if( utenti!=null)
+            return Response.ok(utenti).build();
         else
             return Response.status(Status.NOT_FOUND).build();
-    } 
-    @Path("/{dominio}")
+    }
+    @Path("/{email}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDominio(@PathParam("dominio") String dominio){
-        Dominio d=domini.get(dominio);
-        if(d!=null)
-            return Response.ok(d).build();
+    public Response getUtente(@PathParam("email") String email){
+        Utente u=utenti.get(email);
+        if(u!=null)
+            return Response.ok(u).build();
         else
             return Response.status(Status.NOT_FOUND).build();
     }
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDominio(Dominio dominio){
+    public Response addUtente(Utente utente){
         
-        if(domini.get(dominio.getDominio())==null){
-            domini.put(dominio.getDominio(), dominio);
+        if(utenti.get(utente.getEmail())==null){
+            utenti.put(utente.getEmail(), utente);
             try{
-                return Response.created(new URI("http://localhost:8080/dominio/"+dominio.getDominio())).build();
+                return Response.created(new URI("http://localhost:8080/utente/"+utente.getEmail())).build();
             }catch(URISyntaxException e){
-                return Response.serverError().build();
+                return Response.status(Status.INTERNAL_SERVER_ERROR).build();
             }
         }else{
             return Response.status(Status.CONFLICT).build();
@@ -66,13 +67,17 @@ public class DominioResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(Dominio dominio){
-        Dominio d=domini.get(dominio.getDominio());
-        if(d!=null){
-            domini.put(dominio.getDominio(), dominio);
+    public Response updateUtente(Utente utente){
+        Utente u=utenti.get(utente.getEmail());
+        if(u!=null){
+            utenti.put(utente.getEmail(), utente);
             return Response.ok().build();
         }else{
             return Response.status(Status.NOT_FOUND).build();
         }
     }
+    
+
+
+
 }
