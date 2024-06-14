@@ -1,7 +1,13 @@
 package it.unimib.sd2024;
 
-import java.net.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Classe principale in cui parte il database.
@@ -12,6 +18,9 @@ public class Main {
      */
     public static final int PORT = 3030;
 
+    //Objectmapper
+    public static final ObjectMapper mapper = new ObjectMapper();
+    
     /**
      * Avvia il database e l'ascolto di nuove connessioni.
      */
