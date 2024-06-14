@@ -8,25 +8,27 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Connection {
-    private static int port=3030;
-    private static String host="localhost";
+    private static int port = 3030;
+    private static String host = "localhost";
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
 
-
-    public Connection() throws UnknownHostException,IOException{
-        socket=new Socket(host,port);
-        out=new PrintWriter(socket.getOutputStream(),true);
-        in=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    public Connection() throws UnknownHostException, IOException {
+        socket = new Socket(host, port);
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
-    public void send(String message) throws IOException{
+
+    public void send(String message) throws IOException {
         out.println(message);
     }
-    public String receive() throws IOException{
+
+    public String receive() throws IOException {
         return in.readLine();
     }
-    public void close() throws IOException{
+
+    public void close() throws IOException {
         in.close();
         out.close();
         socket.close();

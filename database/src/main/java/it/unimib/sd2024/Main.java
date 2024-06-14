@@ -41,9 +41,12 @@ public class Main {
         }
 
         public void run() {
+            System.out.println("Connected to client " + client.getInetAddress() + ":" + client.getPort());
             try {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                out.println("hello world");
+
 
                 String inputLine;
 

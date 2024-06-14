@@ -1,4 +1,5 @@
 package it.unimib.sd2024;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -18,11 +19,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+
 @Path("acquisto")
 public class AcquistoResource {
-    private static Map <String, Acquisto> acquisti=new HashMap<String,Acquisto>();
-    static{
-        Acquisto a1=new Acquisto();
+    private static Map<String, Acquisto> acquisti = new HashMap<String, Acquisto>();
+    static {
+        Acquisto a1 = new Acquisto();
         a1.setNome("Mario");
         a1.setCognome("Rossi");
         a1.setMail("m.rossi@gmail.com");
@@ -33,49 +35,53 @@ public class AcquistoResource {
         a1.setDataScadenza(LocalDate.now());
         acquisti.put("m.rossi@gmail.com", a1);
     }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(){
-        if( acquisti!=null)
+    public Response getAll() {
+        if (acquisti != null)
             return Response.ok(acquisti).build();
         else
             return Response.status(Status.NOT_FOUND).build();
     }
+
     @Path("/{mail}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAcquisto(@PathParam("mail") String mail){
-        Acquisto a=acquisti.get(mail);
-        if(a!=null)
+    public Response getAcquisto(@PathParam("mail") String mail) {
+        Acquisto a = acquisti.get(mail);
+        if (a != null)
             return Response.ok(a).build();
         else
             return Response.status(Status.NOT_FOUND).build();
     }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAcquisto(Acquisto acquisto){
-        
-        if(acquisti.get(acquisto.getMail())==null){
+    public Response addAcquisto(Acquisto acquisto) {
+
+        if (acquisti.get(acquisto.getMail()) == null) {
             acquisti.put(acquisto.getMail(), acquisto);
-            try{
-                return Response.created(new URI("http://localhost:8080/acquisto/"+acquisto.getMail())).build();
-            }catch(URISyntaxException e){
+            try {
+                return Response.created(new URI("http://localhost:8080/acquisto/" + acquisto.getMail())).build();
+            } catch (URISyntaxException e) {
                 return Response.serverError().build();
             }
-        }else{
+        } else {
             return Response.status(Status.CONFLICT).build();
         }
     }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateAcquisto(Acquisto acquisto){
-        Acquisto a=acquisti.get(acquisto.getMail());
-        if(a!=null){
+    public Response updateAcquisto(Acquisto acquisto) {
+        Acquisto a = acquisti.get(acquisto.getMail());
+        if (a != null) {
             acquisti.put(acquisto.getMail(), acquisto);
             return Response.ok().build();
-        }else{
+        } else {
             return Response.status(Status.NOT_FOUND).build();
         }
     }

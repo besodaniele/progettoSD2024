@@ -38,7 +38,8 @@ public class ExampleResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Integer getKeyboards() {
-        // Aprire qui una socket verso il database, fare il comando per ottenere la risposta.
+        // Aprire qui una socket verso il database, fare il comando per ottenere la
+        // risposta.
         // ...
         return 42;
     }
