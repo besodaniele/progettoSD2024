@@ -25,14 +25,16 @@ public class AcquistoResource {
     private static Map<String, Acquisto> acquisti = new HashMap<String, Acquisto>();
     static {
         Acquisto a1 = new Acquisto();
-        a1.setNome("Mario");
-        a1.setCognome("Rossi");
-        a1.setMail("m.rossi@gmail.com");
         a1.setNumeroCarta("1234567890123456");
         a1.setCvv("123");
         a1.setNomeIntestatario("Mario");
         a1.setCognomeIntestatario("Rossi");
         a1.setDataScadenza(LocalDate.now());
+        Utente u1 = new Utente();
+        u1.setNome("Mario");
+        u1.setCognome("Rossi");
+        u1.setEmail("m.rossi@gmail.com");
+        a1.setCliente(u1);
         acquisti.put("m.rossi@gmail.com", a1);
     }
 
@@ -61,10 +63,10 @@ public class AcquistoResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addAcquisto(Acquisto acquisto) {
 
-        if (acquisti.get(acquisto.getMail()) == null) {
-            acquisti.put(acquisto.getMail(), acquisto);
+        if (acquisti.get(acquisto.getCliente().getEmail()) == null) {
+            acquisti.put(acquisto.getCliente().getEmail(), acquisto);
             try {
-                return Response.created(new URI("http://localhost:8080/acquisto/" + acquisto.getMail())).build();
+                return Response.created(new URI("http://localhost:8080/acquisto/" + acquisto.getCliente().getEmail())).build();
             } catch (URISyntaxException e) {
                 return Response.serverError().build();
             }
@@ -77,9 +79,9 @@ public class AcquistoResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateAcquisto(Acquisto acquisto) {
-        Acquisto a = acquisti.get(acquisto.getMail());
+        Acquisto a = acquisti.get(acquisto.getCliente().getEmail());
         if (a != null) {
-            acquisti.put(acquisto.getMail(), acquisto);
+            acquisti.put(acquisto.getCliente().getEmail(), acquisto);
             return Response.ok().build();
         } else {
             return Response.status(Status.NOT_FOUND).build();

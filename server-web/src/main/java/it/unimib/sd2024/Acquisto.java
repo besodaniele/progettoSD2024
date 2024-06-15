@@ -3,31 +3,16 @@ package it.unimib.sd2024;
 import java.time.LocalDate;
 
 public class Acquisto {
-    private String nome, cognome, mail, numeroCarta, cvv, nomeIntestatario, cognomeIntestatario;
+    private String numeroCarta, cvv, nomeIntestatario, cognomeIntestatario;
     private LocalDate dataScadenza;
+    private Utente cliente;
 
-    public String getNome() {
-        return nome;
+    public Utente getCliente() {
+        return cliente;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCognome() {
-        return cognome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setCliente(Utente cliente) {
+        this.cliente = cliente;
     }
 
     public String getNumeroCarta() {

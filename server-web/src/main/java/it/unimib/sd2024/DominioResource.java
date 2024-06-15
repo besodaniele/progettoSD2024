@@ -30,7 +30,14 @@ public class DominioResource {
         d1.setDominio("unimib.it");
         d1.setDataRegistrazione(LocalDate.now());
         d1.setDataScadenza(LocalDate.now());
+        Utente u1 = new Utente();
+        u1.setNome("Mario");
+        u1.setCognome("Rossi");
+        u1.setEmail("m.rossi@gmail.com");
+        d1.setProprietario(u1);
+
         domini.put("unimib.it", d1);
+
     }
 
     @GET
