@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 /**
  * Classe principale in cui parte il database.
@@ -25,10 +26,10 @@ public class Main {
      * Avvia il database e l'ascolto di nuove connessioni.
      */
     public static void startServer() throws IOException {
+
         var server = new ServerSocket(PORT);
 
         System.out.println("Database listening at localhost:" + PORT);
-
         try {
             while (true)
                 new Handler(server.accept()).start();
@@ -54,9 +55,7 @@ public class Main {
             try {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                out.println("hello world");
-
-
+                
                 String inputLine;
 
                 while ((inputLine = in.readLine()) != null) {
@@ -83,8 +82,30 @@ public class Main {
      *
      * @throws IOException
      */
+    private static ArrayNode readJson(String path) {
+        try {
+            return (ArrayNode) mapper.readTree(Main.class.getResourceAsStream(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    //@TODO: implementare i metodi di setup
+    private static void setupUtenti(ArrayNode utenti){}
+    private static void setupDomini(ArrayNode domini){}
+    private static void setupAcquisti(ArrayNode acquisti){}
+
+
+
+
+
     public static void main(String[] args) throws IOException {
         startServer();
+        //caricamento file di configurazione
+        ArrayNode acquisti = readJson("../configurationFile/acquisti.json");
+        ArrayNode domini = readJson("../configurationFile/domini.json");
+        ArrayNode utenti = readJson("../configurationFile/utenti.json");
+
     }
 }
 
