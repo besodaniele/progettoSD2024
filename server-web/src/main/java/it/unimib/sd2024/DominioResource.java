@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import jakarta.json.JsonException;
+import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbException;
 import jakarta.ws.rs.Consumes;
@@ -35,7 +36,6 @@ public class DominioResource {
         u1.setCognome("Rossi");
         u1.setEmail("m.rossi@gmail.com");
         d1.setProprietario(u1);
-
         domini.put("unimib.it", d1);
 
     }
@@ -64,7 +64,6 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(Dominio dominio) {
-
         if (domini.get(dominio.getDominio()) == null) {
             domini.put(dominio.getDominio(), dominio);
             try {
@@ -106,4 +105,14 @@ public class DominioResource {
         return Response.status(Status.INTERNAL_SERVER_ERROR).build();
     }
 
+    @Path("/testDB")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testPOST(Dominio dominio) {
+        Jsonb jsonb = JsonbBuilder.create();
+        String js = jsonb.toJson(dominio);
+        // connection.post(js);
+        return Response.ok(js).build();
+    }
 }
