@@ -28,7 +28,6 @@ public class UtenteResources {
         u1.setNome("Mario");
         u1.setCognome("Rossi");
         u1.setEmail("prova@gmail.com");
-        u1.setPassword("1234");
         utenti.put("prova@gmail.com", u1);
 
     }
