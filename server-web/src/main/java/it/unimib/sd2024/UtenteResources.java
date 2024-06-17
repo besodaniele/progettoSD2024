@@ -1,5 +1,6 @@
 package it.unimib.sd2024;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -35,16 +36,44 @@ public class UtenteResources {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
+        /* concept 
+        try {
+            Connection connection = new Connection();
+            connection.send("GET utente:all");
+            String response = connection.receive();
+            connection.close();
+            if (response != null) {
+                utenti = JsonbBuilder.create().fromJson(response, Map.class);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        */
         if (utenti != null)
             return Response.ok(utenti).build();
         else
             return Response.status(Status.NOT_FOUND).build();
-    }
 
+    }
     @Path("/{email}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUtente(@PathParam("email") String email) {
+        /* concept 
+        try {
+            Connection connection = new Connection();
+            connection.send("GET utente:"+email);
+            String response = connection.receive();
+            connection.close();
+            if (response != null) {
+                utenti = JsonbBuilder.create().fromJson(response, Map.class);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        */
         Utente u = utenti.get(email);
         if (u != null)
             return Response.ok(u).build();
@@ -56,7 +85,6 @@ public class UtenteResources {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUtente(Utente utente) {
-
         if (utenti.get(utente.getEmail()) == null) {
             utenti.put(utente.getEmail(), utente);
             try {
