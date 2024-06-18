@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 // la classe è una singleton
 public class PaneDB {
@@ -42,7 +43,9 @@ public class PaneDB {
         if(param.equals("*"))
         {
             return jsonNode.get(key);
+            
         }
+
         return jsonNode.get(key).get(param);
 
     }

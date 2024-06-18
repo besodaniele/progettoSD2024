@@ -1,10 +1,10 @@
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\Utente.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\beans\Dominio.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\ExampleResource.java
 C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\Connection.java
 C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\JsonParsingException.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\beans\Acquisto.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\beans\Utente.java
 C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\JsonException.java
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\Dominio.java
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\Acquisto.java
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\AcquistoResource.java
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\UtenteResources.java
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\DominioResource.java
-C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\ExampleResource.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\AcquistoResource.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\DominioResource.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\UtenteResources.java
