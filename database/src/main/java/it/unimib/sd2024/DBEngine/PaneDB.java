@@ -10,7 +10,7 @@ public class PaneDB {
     private final HashMap<String, HashMap<String, String>> db;
     private final HashMap<String, String> tabella;
 
-    private JsonNode arrayNode;
+    private JsonNode jsonNode;
 
 
     private static PaneDB pane = null;
@@ -32,11 +32,18 @@ public class PaneDB {
         db.put(tableName, tabella);
     }
     public void setupTest(JsonNode jsonNode) {
-        this.arrayNode = jsonNode;
+        this.jsonNode = jsonNode;
     }
 
     public JsonNode get(String tableName, String key, String param) {
-        return arrayNode.get(key);
+        if(key.equals("*")){
+            return jsonNode;
+        }
+        if(param.equals("*"))
+        {
+            return jsonNode.get(key);
+        }
+        return jsonNode.get(key).get(param);
 
     }
 

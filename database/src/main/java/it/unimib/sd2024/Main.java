@@ -61,7 +61,9 @@ public class Main {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 System.out.println("ecco la query:");
-                System.out.println(PaneDB.getDB().get("", "m.rossi@gmail.com", ""));
+
+                
+                System.out.println(PaneDB.getDB().get("utente", "m.rossi@gmail.com", "nome"));
 
                 System.out.println("finished");
 
@@ -71,22 +73,6 @@ public class Main {
             } catch (IOException e) {
                 System.err.println(e);
             }
-        }
-    }
-
-    /**
-     * Metodo principale di avvio del database.
-     *
-     * @param args argomenti passati a riga di comando.
-     *
-     * @throws IOException
-     */
-    private static ArrayNode readJson(String path) {
-        try {
-            return (ArrayNode) mapper.readTree(Main.class.getResourceAsStream(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
