@@ -15,22 +15,26 @@ async function inviaDati(event)
     };
   
     // Invia una richiesta POST al server
-    const response = fetch(API_URI + '/registrazione', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-    //.then(response => response.json())
-    //.then(data => console.log(data))
-    //.catch((error) => {
-    //  console.error('Error:', error);
-    //});
+    try {
+        const response = fetch(API_URI + '/registrazione', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+        });
 
-    if(!response.ok)
-    {
-        throw new Error("Errore! status: " + response.status);
+        if(!response.ok)
+        {
+            throw new Error("Errore! status: " + response.status);
+        }
+
+        const responseData = await response.json();
+        //console.log(responseData);
+        //return responseData;
+        window.location.href = "id.html?id=" + responseData.id;
+    } catch (error) {
+        console.error('Error:', error);
     }
 };
 
