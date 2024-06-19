@@ -103,17 +103,4 @@ public class DominioResource {
             return Response.status(Status.NOT_FOUND).build();
         }
     }
-    @GET
-    @Path("/testLogin")   
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response testLogin(@Context HttpServletRequest request) {
-        if (request.getSession().getAttribute("utente") != null) {
-            return Response.ok(request.getSession().getAttribute("utente")).build();
-        } else {
-            return Response.status(Status.UNAUTHORIZED).build();
-        }
-    }
-
-
-
 }

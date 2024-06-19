@@ -29,7 +29,8 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("utente")
 public class UtenteResources {
-    private static Map<String, Utente> utenti = new HashMap<String, Utente>();
+    private static Map<Integer, Utente> utenti = new HashMap<Integer, Utente>();
+    private static int lastId = 0;
     static {
         Utente u1 = new Utente();
         u1.setNome("Mario");
@@ -39,7 +40,7 @@ public class UtenteResources {
         utenti.put(u1.getId(), u1);
     }
 
-    //per testare se viene aggiunto l'utente
+    // per testare se viene aggiunto l'utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -49,79 +50,51 @@ public class UtenteResources {
             return Response.status(Status.NOT_FOUND).build();
 
     }
-    @Path("/{email}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUtente(@PathParam("email") String email) {
-        
-        Utente u = utenti.get(email);
-        if (u != null)
-            return Response.ok(u).build();
-        else
-            return Response.status(Status.NOT_FOUND).build();
-    }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUtente(Utente utente) {
-        if (utenti.get(utente.getEmail()) == null) {
-            utenti.put(utente.getEmail(), utente);
-            try {
-                return Response.created(new URI("http://localhost:8080/utente/" + utente.getEmail())).build();
-            } catch (URISyntaxException e) {
-                return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        for (Utente u : utenti.values()) {
+            if (u.getEmail().equals(utente.getEmail())) {
+                return Response.status(Status.CONFLICT).build();
             }
-        } else {
-            return Response.status(Status.CONFLICT).build();
         }
+        utente.setId(lastId++);
+        utenti.put(utente.getId(), utente);
+        try {
+            return Response.created(new URI("http://localhost:8080/utente/" + utente.getEmail())).build();
+        } catch (URISyntaxException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-<<<<<<< HEAD
-    public Response updateUtente(Utente utente) {
-        Utente u = utenti.get(utente.getEmail());
-=======
-    public Response login(@QueryParam("id") int id, @Context HttpServletRequest request) {
-        Utente u = utenti.get(id);
->>>>>>> 2da4154452c814f7c1918a0217b70ef130127bcd
-        if (u != null) {
-            utenti.put(utente.getEmail(), utente);
-            return Response.ok().build();
-        } else {
-            return Response.status(Status.NOT_FOUND).build();
-        }
-    }
-
-
-    //test per la mantenere all'interno della sessione l'utente loggato
+    // test per la mantenere all'interno della sessione l'utente loggato
     @Path("/login")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@QueryParam("id") String id, @Context HttpServletRequest request){
+    public Response login(@QueryParam("id") int id, @Context HttpServletRequest request) {
         Utente u = utenti.get(id);
-        if(u != null){
-            var sessione= request.getSession();
+        if (u != null) {
+            var sessione = request.getSession();
             sessione.setAttribute("utente", u);
             return Response.ok(u).build();
-        }else{
+        } else {
             return Response.status(Status.NOT_FOUND).build();
         }
     }
+
     @Path("testLogin")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response testLogin(@Context HttpServletRequest request){
+    public Response testLogin(@Context HttpServletRequest request) {
         HttpSession sessione = request.getSession();
         Utente u = (Utente) sessione.getAttribute("utente");
-        if(u != null){
+        if (u != null) {
             return Response.ok(u).build();
-        }else{
+        } else {
             return Response.status(Status.UNAUTHORIZED).build();
         }
     }
-
 
 }
