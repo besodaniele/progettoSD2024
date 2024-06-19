@@ -35,10 +35,11 @@ public class UtenteResources {
         u1.setNome("Mario");
         u1.setCognome("Rossi");
         u1.setEmail("prova@gmail.com");
-        utenti.put("prova@gmail.com", u1);
-
+        u1.setId(lastId++);
+        utenti.put(u1.getId(), u1);
     }
 
+    //per testare se viene aggiunto l'utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
@@ -79,8 +80,13 @@ public class UtenteResources {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+<<<<<<< HEAD
     public Response updateUtente(Utente utente) {
         Utente u = utenti.get(utente.getEmail());
+=======
+    public Response login(@QueryParam("id") int id, @Context HttpServletRequest request) {
+        Utente u = utenti.get(id);
+>>>>>>> 2da4154452c814f7c1918a0217b70ef130127bcd
         if (u != null) {
             utenti.put(utente.getEmail(), utente);
             return Response.ok().build();

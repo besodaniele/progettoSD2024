@@ -31,14 +31,14 @@ public class PaneDB {
         try {
             JsonNode jn = tabelle.get(tableName);
 
-        if(!(key.equals("*"))){
+            if(!(key.equals("*"))){
             jn = jn.get(key);
-        }
+            }
 
-        if(!param.equals("*")){
+            if(!param.equals("*")){
             jn = jn.get(param);
-        }
-        return jn;
+            }
+            return jn;
         } catch (Exception e) {
             return null;
         }
