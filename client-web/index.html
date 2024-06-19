@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Example page</title>
+    <title>Domini</title>
   </head>
   <body data-server-no-reload>
-    <h2>Hello World!</h2>
-    <script>
-      const API_URI = "http://localhost:8080";
+    <h2>Login</h2>
 
-      window.onload = init();
+    <form id="login">
+      <label for="id">ID: </label>
+      <input type="text" id="id" name="id">
+      <br><br>
+      <button type="button" id="accedi">Accedi</button>
+      <button type="button" id="registrati">Registrati</button>
+    </form>
 
-      async function init() {
-        // Iniziare qui.
-      }
+    <script src="index.js"></script>
 
-    </script>
   </body>
-
 </html>

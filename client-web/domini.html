@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Domini</title>
+  </head>
+  <body data-server-no-reload>
+    <h2>Domini</h2>
+
+    <form id="cerca-domini">
+      <label for="id">Cerca dominio: </label>
+      <input type="text" id="cerca-dominio" name="cerca-dominio">
+      <button type="button" id="dominio">Cerca</button>
+    </form>
+    <br>
+
+    <h3>Domini registrati:</h3>
+    <table border="1">
+        <thead>
+            <tr>
+            <th>Dominio</th>
+            <th>Data di registrazione</th>
+            <th>Data di scadenza</th>
+            <th>Rinnova</th>
+            </tr>
+        </thead>
+        <tbody id="domini-utente">
+        </tbody>
+    </table>
+    <br>
+
+    <h3>Ordini:</h3>
+    <table border="1">
+        <thead>
+            <tr>
+            <th>Dominio</th>
+            <th>Data dell'ordine</th>
+            <th>Oggetto dell'ordine</th>
+            <th>Quota pagata</th>
+            </tr>
+        </thead>
+        <tbody id="ordini-utente">
+        </tbody>
+    </table>
+
+    <script src="domini.js"></script>
+
+  </body>
+</html>
