@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import it.unimib.sd2024.Connection;
 import it.unimib.sd2024.beans.Dominio;
+import it.unimib.sd2024.beans.Utente;
 import jakarta.json.JsonException;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
@@ -46,9 +49,17 @@ public class DominioResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context HttpServletRequest request) {
-        if (domini != null)
+        Utente u = (Utente) request.getSession().getAttribute("utente");
+        List <Dominio> currentDomains = new ArrayList<Dominio>();
+        if (domini != null){
 
-            return Response.ok(domini).build();
+            for (Dominio d : domini.values()) {
+                if (d.getProprietario().equals(u.getEmail())) {
+                    currentDomains.add(d);
+                }
+            }
+            return Response.ok(currentDomains).build();
+        }
         else
             return Response.status(Status.NOT_FOUND).build();
     }
@@ -92,5 +103,17 @@ public class DominioResource {
             return Response.status(Status.NOT_FOUND).build();
         }
     }
+    @GET
+    @Path("/testLogin")   
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response testLogin(@Context HttpServletRequest request) {
+        if (request.getSession().getAttribute("utente") != null) {
+            return Response.ok(request.getSession().getAttribute("utente")).build();
+        } else {
+            return Response.status(Status.UNAUTHORIZED).build();
+        }
+    }
+
+
 
 }
