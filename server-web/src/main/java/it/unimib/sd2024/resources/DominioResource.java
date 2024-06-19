@@ -40,7 +40,7 @@ public class DominioResource {
         d1.setDataRegistrazione(LocalDate.now());
         d1.setDataScadenza(LocalDate.now());
 
-        d1.setProprietario("m.rossi@gmail.com");
+        d1.setProprietario(0);
 
         domini.put("unimib.it", d1);
 
@@ -50,17 +50,19 @@ public class DominioResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context HttpServletRequest request) {
         Utente u = (Utente) request.getSession().getAttribute("utente");
-        List <Dominio> currentDomains = new ArrayList<Dominio>();
-        if (domini != null){
+        if (u == null) {
+            return Response.status(Status.UNAUTHORIZED).build();
+        }
+        List<Dominio> currentDomains = new ArrayList<Dominio>();
+        if (domini != null) {
 
             for (Dominio d : domini.values()) {
-                if (d.getProprietario().equals(u.getEmail())) {
+                if (d.getProprietario() == u.getId()) {
                     currentDomains.add(d);
                 }
             }
             return Response.ok(currentDomains).build();
-        }
-        else
+        } else
             return Response.status(Status.NOT_FOUND).build();
     }
 
@@ -79,6 +81,8 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(Dominio dominio) {
+
+        //TODO implement buying logic here
         if (domini.get(dominio.getDominio()) == null) {
             domini.put(dominio.getDominio(), dominio);
             try {

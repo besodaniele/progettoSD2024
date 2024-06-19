@@ -35,7 +35,7 @@ public class UtenteResources {
         Utente u1 = new Utente();
         u1.setNome("Mario");
         u1.setCognome("Rossi");
-        u1.setEmail("prova@gmail.com");
+        u1.setEmail("m.rossi@gmail.com");
         u1.setId(lastId++);
         utenti.put(u1.getId(), u1);
     }
@@ -50,10 +50,11 @@ public class UtenteResources {
             return Response.status(Status.NOT_FOUND).build();
 
     }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addUtente(Utente utente) {
+    public Response registrazione(Utente utente) {
         for (Utente u : utenti.values()) {
             if (u.getEmail().equals(utente.getEmail())) {
                 return Response.status(Status.CONFLICT).build();
@@ -69,7 +70,6 @@ public class UtenteResources {
 
     }
 
-    // test per la mantenere all'interno della sessione l'utente loggato
     @Path("/login")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -84,6 +84,7 @@ public class UtenteResources {
         }
     }
 
+    // test per visionare l'utente loggato
     @Path("testLogin")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

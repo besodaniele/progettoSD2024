@@ -5,13 +5,14 @@ import java.time.LocalDate;
 public class Acquisto {
     private String numeroCarta, cvv, nomeIntestatario, cognomeIntestatario;
     private LocalDate dataScadenza;
-    private String cliente;
+    private int cliente, id;
+    private double quota;
 
-    public String getCliente() {
+    public int getCliente() {
         return cliente;
     }
 
-    public void setCliente(String cliente) {
+    public void setCliente(int cliente) {
         this.cliente = cliente;
     }
 
@@ -53,6 +54,22 @@ public class Acquisto {
 
     public void setDataScadenza(LocalDate dataScadenza) {
         this.dataScadenza = dataScadenza;
+    }
+
+    public double getQuota() {
+        return quota;
+    }
+
+    public void setQuota(double quota) {
+        this.quota = quota;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }
