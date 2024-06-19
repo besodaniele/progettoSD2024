@@ -10,7 +10,6 @@ import java.net.Socket;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.unimib.sd2024.DBEngine.PaneDB;
@@ -62,9 +61,22 @@ public class Main {
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 System.out.println("ecco la query:");
 
-                
-                System.out.println(PaneDB.getDB().get("utente", "m.rossi@gmail.com", "nome"));
-
+                //test
+                //System.out.println(PaneDB.getDB().delete("utenti", "m.rossi@gmail.com"));
+                String json = "{ \"nome\" : \"Mario\", \"cognome\" : \"bianchi\", \"email\" : \"m.rossi@gmail.com\"}";
+                JsonNode value = mapper.readTree(json);
+                System.out.println(PaneDB.getDB().update("utenti", "m.rossi@gmail.com", value));
+                JsonNode result=PaneDB.getDB().get("utenti", "m.rossi@gmail.com", "cognome");
+                if(result!=null){
+                    System.out.println(result);
+                }else{
+                    System.out.println("null");
+                }
+                String json1 = "{ \"nome\" : \"Yang\", \"cognome\" : \"Shi\", \"email\" : \"y.shi@gmail.com\"}";
+                JsonNode value1 = mapper.readTree(json1);
+                System.out.println(PaneDB.getDB().insert("utenti", "y.shi@gmail.com", value1));
+                JsonNode result1=PaneDB.getDB().get("utenti", "y.shi@gmail.com", "cognome");
+                System.out.println(result1);
                 System.out.println("finished");
 
                 in.close();
@@ -77,18 +89,21 @@ public class Main {
     }
 
     // @TODO: implementare i metodi di setup
-    private static void setupUtenti(ArrayNode utenti) {
+    private static void setupUtenti(JsonNode utenti) {
+        PaneDB.getDB().createTable("utenti", utenti);
     }
 
-    private static void setupDomini(ArrayNode domini) {
+    private static void setupDomini(JsonNode domini) {
+        PaneDB.getDB().createTable("domini", domini);
     }
 
-    private static void setupAcquisti(ArrayNode acquisti) {
+    private static void setupAcquisti(JsonNode acquisti) {
+        PaneDB.getDB().createTable("acquisti", acquisti);
     }
 
     public static ObjectNode fetchJsonFromFile(String pathToFile) throws IOException {
-        File file = new File(pathToFile);
-        JsonNode rootNode = mapper.readTree(file);
+        File file = new File(pathToFile); //si prende il file dal path
+        JsonNode rootNode = mapper.readTree(file); //leggo il file JSON e lo trasformo in un JsonNode
 
         if (rootNode.isObject()) {
             return (ObjectNode) rootNode;
@@ -99,24 +114,18 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // caricamento file di configurazione
-        // ArrayNode acquisti = fetchJsonFromFile("./configurationFile/acquisti.json");
-        // ArrayNode domini = fetchJsonFromFile("./configurationFile/domini.json");
+        JsonNode acquisti = fetchJsonFromFile("./configurationFile/acquisti.json");
+        JsonNode domini = fetchJsonFromFile("./configurationFile/domini.json");
         JsonNode utenti = fetchJsonFromFile("./configurationFile/utenti.json");
 
-        PaneDB.getDB().setupTest(utenti);
+        // setup dei dati
+        setupUtenti(utenti);
+        setupDomini(domini);
+        setupAcquisti(acquisti);
+
+        // avvio del server
         startServer();
 
-        // setupUtenti(utenti);
-        // setupDomini(domini);
-        // setupAcquisti(acquisti);
-
     }
-    /*
-     * public static void setupUtenti(ArrayNode utenti) {
-     * for (var utente : utenti) {
-     * PaneDB.getDB().set("utente:"+utente.get("email").asText(), utente.asText());
-     * }
-     * }
-     */
 
 }
