@@ -6,5 +6,5 @@ window.onload = init();
 
 async function init() 
 {
-        // Iniziare qui.
+    // Iniziare qui.
 }
