@@ -38,9 +38,7 @@ public class UtenteResources {
         u1.setEmail("prova@gmail.com");
         u1.setId(lastId++);
         utenti.put(u1.getId(), u1);
-
     }
-
 
     //per testare se viene aggiunto l'utente
     @GET
@@ -74,7 +72,7 @@ public class UtenteResources {
     @Path("/login")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@QueryParam("id") String id, @Context HttpServletRequest request) {
+    public Response login(@QueryParam("id") int id, @Context HttpServletRequest request) {
         Utente u = utenti.get(id);
         if (u != null) {
             var sessione = request.getSession();
