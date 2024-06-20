@@ -69,10 +69,19 @@ public class AcquistoResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAcquisto(Acquisto acquisto) {
+    public Response addAcquisto(@Context HttpServletRequest request,Acquisto acquisto) {
+
 
         //check if user is logged in
 
+        Utente u = (Utente) request.getSession().getAttribute("utente");
+        if (u == null) {
+            return Response.status(Status.UNAUTHORIZED).build();
+        }
+        acquisto.setCliente(u.getId());
+        acquisto.setNome(u.getNome());
+        acquisto.setCognome(u.getCognome());
+        acquisto.setMail(u.getEmail());
         //idea: oggetto acquisto che ricevo ha solo i dati della carta e la quota, senza user 
         //devo aggiungere l'utente che ha effettuato l'acquisto recuperandolo dalla sessione
 

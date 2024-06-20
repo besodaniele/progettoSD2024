@@ -63,7 +63,7 @@ public class UtenteResources {
         utente.setId(lastId++);
         utenti.put(utente.getId(), utente);
         try {
-            return Response.created(new URI("http://localhost:8080/utente/" + utente.getEmail())).build();
+            return Response.created(new URI("http://localhost:8080/utente/" + utente.getId())).build();
         } catch (URISyntaxException e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }

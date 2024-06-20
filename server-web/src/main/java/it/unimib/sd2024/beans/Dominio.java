@@ -6,6 +6,8 @@ public class Dominio {
     private String dominio;
     private LocalDate dataRegistrazione, dataScadenza;
     private int proprietario;
+    private int id ;
+    
 
     public int getProprietario() {
         return proprietario;
@@ -37,6 +39,14 @@ public class Dominio {
 
     public void setDataScadenza(LocalDate dataScadenza) {
         this.dataScadenza = dataScadenza;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }

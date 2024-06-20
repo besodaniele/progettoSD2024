@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.unimib.sd2024.Connection;
+import it.unimib.sd2024.beans.Acquisto;
 import it.unimib.sd2024.beans.Dominio;
 import it.unimib.sd2024.beans.Utente;
 import jakarta.json.JsonException;
@@ -32,8 +33,8 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("dominio")
 public class DominioResource {
-    private static Map<String, Dominio> domini = new HashMap<String, Dominio>();
-
+    private static Map<Integer, Dominio> domini = new HashMap<Integer, Dominio>();
+    private static int lastId = 0;
     static {
         Dominio d1 = new Dominio();
         d1.setDominio("unimib.it");
@@ -41,8 +42,9 @@ public class DominioResource {
         d1.setDataScadenza(LocalDate.now());
 
         d1.setProprietario(0);
+        d1.setId(lastId++);
 
-        domini.put("unimib.it", d1);
+        domini.put(d1.getId(), d1);
 
     }
 
@@ -66,6 +68,7 @@ public class DominioResource {
             return Response.status(Status.NOT_FOUND).build();
     }
 
+    // ricerca di un dominio
     @Path("/{dominio}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -80,11 +83,22 @@ public class DominioResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDominio(Dominio dominio) {
+    public Response addDominio(@Context HttpServletRequest request, Dominio dominio, Acquisto acquisto) {
+        // check if user logged in
+        Utente u = (Utente) request.getSession().getAttribute("utente");
+        if (u == null) {
+            return Response.status(Status.UNAUTHORIZED).build();
+        }
 
-        //TODO implement buying logic here
-        if (domini.get(dominio.getDominio()) == null) {
-            domini.put(dominio.getDominio(), dominio);
+        // TODO implement buying logic here
+        if (domini.get(dominio.getDominio()) == null
+                ||
+                domini.get(dominio.getDominio()).getDataScadenza().isBefore(LocalDate.now())) {
+
+            // inserire acquisto nel db
+
+            // inserire dominio nel db
+            domini.put(dominio.getId(), dominio);
             try {
                 return Response.created(new URI("http://localhost:8080/dominio/" + dominio.getDominio())).build();
             } catch (URISyntaxException e) {
@@ -95,16 +109,30 @@ public class DominioResource {
         }
     }
 
+    // rinnovo di un dominio
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(Dominio dominio) {
+    public Response updateDominio(@Context HttpServletRequest request, Dominio dominio) {
         Dominio d = domini.get(dominio.getDominio());
-        if (d != null) {
-            domini.put(dominio.getDominio(), dominio);
-            return Response.ok().build();
-        } else {
+        if (d == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
+
+        Utente u = (Utente) request.getSession().getAttribute("utente");
+        if (u == null || d.getProprietario() != u.getId()) {
+            return Response.status(Status.UNAUTHORIZED).build();
+        }
+
+        if (d.getDataScadenza().isBefore(LocalDate.now())) {
+            // inserisco acquisto nel db
+
+            // agiorno il dominio nel db
+            domini.put(dominio.getId(), dominio);
+            return Response.ok().build();
+        } else {
+            return Response.status(Status.UNAUTHORIZED).build();
+        }
+
     }
 }
