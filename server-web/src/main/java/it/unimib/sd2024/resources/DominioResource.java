@@ -146,4 +146,17 @@ public class DominioResource {
         }
 
     }
+    @Path("/testDB")
+    @GET
+    public Response testDB() {
+        try {
+            Connection conn = new Connection();
+            return Response.ok().build();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+        
+    }
 }
