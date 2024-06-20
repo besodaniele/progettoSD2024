@@ -69,7 +69,7 @@ public class AcquistoResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addAcquisto(@Context HttpServletRequest request,Acquisto acquisto) {
+    public Response addAcquisto(@Context HttpServletRequest request, Acquisto acquisto) {
 
 
         //check if user is logged in

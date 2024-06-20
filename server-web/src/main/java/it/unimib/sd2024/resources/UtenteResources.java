@@ -38,6 +38,12 @@ public class UtenteResources {
         u1.setEmail("m.rossi@gmail.com");
         u1.setId(lastId++);
         utenti.put(u1.getId(), u1);
+        Utente u2 = new Utente();
+        u2.setNome("Luigi");
+        u2.setCognome("Verdi");
+        u2.setEmail("l.verdi@gmail.com");
+        u2.setId(lastId++);
+        utenti.put(u2.getId(), u2);
     }
 
     // per testare se viene aggiunto l'utente
