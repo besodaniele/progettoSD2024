@@ -63,6 +63,7 @@ public class Main {
 
                 //test
                 //System.out.println(PaneDB.getDB().delete("utenti", "m.rossi@gmail.com"));
+                /*
                 String json = "{ \"nome\" : \"Mario\", \"cognome\" : \"bianchi\", \"email\" : \"m.rossi@gmail.com\"}";
                 JsonNode value = mapper.readTree(json);
                 System.out.println(PaneDB.getDB().update("utenti", "m.rossi@gmail.com", value));
@@ -71,12 +72,20 @@ public class Main {
                     System.out.println(result);
                 }else{
                     System.out.println("null");
-                }
+                } 
                 String json1 = "{ \"nome\" : \"Yang\", \"cognome\" : \"Shi\", \"email\" : \"y.shi@gmail.com\"}";
                 JsonNode value1 = mapper.readTree(json1);
                 System.out.println(PaneDB.getDB().insert("utenti", "y.shi@gmail.com", value1));
                 JsonNode result1=PaneDB.getDB().get("utenti", "y.shi@gmail.com", "cognome");
                 System.out.println(result1);
+                
+                */
+                JsonNode result=PaneDB.getDB().get("utenti", "*", "cognome");
+                if(result!=null){
+                    System.out.println(result);
+                }else{
+                    System.out.println("null");
+                } 
                 System.out.println("finished");
 
                 in.close();
