@@ -18,6 +18,7 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -39,11 +40,19 @@ public class DominioResource {
         Dominio d1 = new Dominio();
         d1.setDominio("unimib.it");
         d1.setDataRegistrazione(LocalDate.now());
-        d1.setDataScadenza(LocalDate.now());
+        d1.setDataScadenza(LocalDate.of(2026, 1, 1));
 
         d1.setProprietario(0);
         d1.setId(lastId++);
 
+        Dominio d2 = new Dominio();
+        d2.setDominio("google.com");
+        d2.setDataRegistrazione(LocalDate.now());
+        d2.setDataScadenza(LocalDate.of(2025, 1, 1));
+
+        d2.setProprietario(1);
+        d2.setId(lastId++);
+        domini.put(d2.getId(), d2);
         domini.put(d1.getId(), d1);
 
     }
@@ -83,30 +92,27 @@ public class DominioResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDominio(@Context HttpServletRequest request, Dominio dominio, Acquisto acquisto) {
+    //dati acquisti come query param???
+    public Response addDominio(@Context HttpServletRequest request, Dominio dominio) {
+
         // check if user logged in
         Utente u = (Utente) request.getSession().getAttribute("utente");
         if (u == null) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
 
-        // TODO implement buying logic here
-        if (domini.get(dominio.getDominio()) == null
-                ||
-                domini.get(dominio.getDominio()).getDataScadenza().isBefore(LocalDate.now())) {
-
-            // inserire acquisto nel db
-
-            // inserire dominio nel db
-            domini.put(dominio.getId(), dominio);
-            try {
-                return Response.created(new URI("http://localhost:8080/dominio/" + dominio.getDominio())).build();
-            } catch (URISyntaxException e) {
-                return Response.serverError().build();
+        // check if domain already exists
+        for (Dominio d : domini.values()) {
+            if (d.getDominio().equals(dominio.getDominio()) && d.getDataScadenza().isAfter(LocalDate.now()) ) {
+                return Response.status(Status.CONFLICT).build();
             }
-        } else {
-            return Response.status(Status.CONFLICT).build();
         }
+        dominio.setId(lastId++);
+        dominio.setProprietario(u.getId());
+        dominio.setDataRegistrazione(LocalDate.now());
+        domini.put(dominio.getId(), dominio);
+        return Response.ok().build();
+
     }
 
     // rinnovo di un dominio
@@ -114,7 +120,12 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateDominio(@Context HttpServletRequest request, Dominio dominio) {
-        Dominio d = domini.get(dominio.getDominio());
+        //TODO modificare
+        Dominio d = domini.get(dominio.getId());
+
+
+
+
         if (d == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -124,7 +135,7 @@ public class DominioResource {
             return Response.status(Status.UNAUTHORIZED).build();
         }
 
-        if (d.getDataScadenza().isBefore(LocalDate.now())) {
+        if (!d.getDataScadenza().isBefore(LocalDate.now())) {
             // inserisco acquisto nel db
 
             // agiorno il dominio nel db
