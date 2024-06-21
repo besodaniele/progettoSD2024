@@ -80,7 +80,7 @@ public class Main {
                 System.out.println(result1);
                 
                 */
-                JsonNode result=PaneDB.getDB().get("utenti", "m.rossi@gmail.com", "nome");
+                JsonNode result=PaneDB.getDB().get("utenti", "*", "nome");
                 if(result!=null){
                     System.out.println(result);
                 }else{

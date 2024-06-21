@@ -56,15 +56,21 @@ public class PaneDB {
             if(!param.equals("*")){
                 keys = on.fields();
                 while(keys.hasNext()){
-                    String k = keys.next().getKey();
-                    ObjectNode on2 = (ObjectNode) keys.next().getValue();
+                    Entry<String, JsonNode> entry = keys.next();
+                    String k = entry.getKey();
+                    ObjectNode on2 = (ObjectNode) entry.getValue();
+                    ArrayList<String> fieldsToRemove = new ArrayList<>();
                     Iterator<Entry<String, JsonNode>> fields = on2.fields();
                     while(fields.hasNext()){
-                        String k2 = fields.next().getKey();
-                        if(!k2.equals(param)){
-                            on2.remove(k2);
+                        Entry<String, JsonNode> entry2 = fields.next();
+                        if(!entry2.getKey().equals(param)){
+                            fieldsToRemove.add(entry2.getKey());
                         }
                     }
+                    for (String field : fieldsToRemove) {
+                        on2.remove(field);
+                    }
+
                     on.set(k, on2);
                 }
             }
