@@ -6,7 +6,7 @@ async function init()
 {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-    console.log(id);
+    console.log("ID Utente: " + id);
     // Stampare l'ID sulla pagina
     document.getElementById("id-utente").innerText = id;
 

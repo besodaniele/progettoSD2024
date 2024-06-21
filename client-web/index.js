@@ -2,8 +2,36 @@ const API_URI = "http://localhost:8080";
 
 window.onload = init();
 
+async function accessoUtente(event)
+{
+    // Prevenire il comportamento di invio del modulo predefinito
+    event.preventDefault();
+
+    const id = document.getElementById('id').value;
+
+    try {
+        const response = await fetch(API_URI + '/login?id=' + id, {
+            method: 'GET'
+        });
+
+        if(response.status === 200)
+        {
+            console.log('Utente loggato con successo');
+            window.location.href = "domini.html";
+        }
+        else
+        {
+            console.error('Errore nel login');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 async function init() 
 {
+    document.getElementById("login").addEventListener("submit", accessoUtente);
+
     let reg = document.getElementById("registrati");
     reg.addEventListener("click", () => {
         window.location.href = "registrazione.html";
