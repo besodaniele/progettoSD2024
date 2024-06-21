@@ -39,7 +39,7 @@ public class PaneDB {
             JsonNode jn = tabelle.get(tableName);
             ObjectNode on = (ObjectNode) jn;
             Iterator<Entry<String, JsonNode>> keys = jn.fields();
-            ArrayList<String> keysToRemove = new ArrayList<String>();
+            ArrayList<String> keysToRemove = new ArrayList<>();
             
             if(!(key.equals("*"))){
                 while(keys.hasNext()){
@@ -67,9 +67,8 @@ public class PaneDB {
                     }
                     on.set(k, on2);
                 }
-            } else {
-                
             }
+
             return on;
         } catch (Exception e) {
             return null;
