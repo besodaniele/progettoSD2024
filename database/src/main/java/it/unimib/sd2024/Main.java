@@ -60,12 +60,14 @@ public class Main {
             try {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                
-                var commando = in.readLine();
-                DBParser.getParser().parse(commando);
-                
 
-                
+                /* var commando = in.readLine();
+                var risposta = DBParser.getParser().parse(commando);
+
+                out.println(risposta);
+                */
+                System.out.println(DBParser.getParser().parse("get utenti.*.* where nome=Luca"));
+                System.out.println(PaneDB.getDB().getTable("utenti").toString());
 
                 in.close();
                 out.close();

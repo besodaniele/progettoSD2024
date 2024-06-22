@@ -36,8 +36,9 @@ public class PaneDB {
 
     public JsonNode get(JsonNode jn, String key, String param) {
         try {
-            ObjectNode on = (ObjectNode) jn;
-            Iterator<Entry<String, JsonNode>> keys = jn.fields();
+            JsonNode jnCopy = jn.deepCopy();
+            ObjectNode on = (ObjectNode) jnCopy;
+            Iterator<Entry<String, JsonNode>> keys = jnCopy.fields();
             ArrayList<String> keysToRemove = new ArrayList<>();
             
             if(!(key.equals("*"))){
