@@ -66,41 +66,6 @@ public class AcquistoResource {
         else
             return Response.status(Status.NOT_FOUND).build();
     }
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addAcquisto(@Context HttpServletRequest request, Acquisto acquisto) {
 
-
-        //check if user is logged in
-
-        Utente u = (Utente) request.getSession().getAttribute("utente");
-        if (u == null) {
-            return Response.status(Status.UNAUTHORIZED).build();
-        }
-        acquisto.setCliente(u.getId());
-        acquisto.setNome(u.getNome());
-        acquisto.setCognome(u.getCognome());
-        acquisto.setMail(u.getEmail());
-        //idea: oggetto acquisto che ricevo ha solo i dati della carta e la quota, senza user 
-        //devo aggiungere l'utente che ha effettuato l'acquisto recuperandolo dalla sessione
-
-
-
-        /* 
-        if (acquisti.get(acquisto.getCliente()) == null) {
-            acquisti.put(acquisto.getCliente(), acquisto);
-            try {
-                return Response.created(new URI("http://localhost:8080/acquisto/" + acquisto.getCliente()))
-                        .build();
-            } catch (URISyntaxException e) {
-                return Response.serverError().build();
-            }
-        } else {
-            return Response.status(Status.CONFLICT).build();
-        }
-        */
-        return null;
-    }
 
 }

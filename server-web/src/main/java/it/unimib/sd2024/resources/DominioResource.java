@@ -93,24 +93,45 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     //dati acquisti come query param???
-    public Response addDominio(@Context HttpServletRequest request, Dominio dominio) {
-
+    public Response addDominio(@Context HttpServletRequest request) {
         // check if user logged in
         Utente u = (Utente) request.getSession().getAttribute("utente");
         if (u == null) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
+        //sto effettuando un acquisto -> aggiungo anche l'acquisto al db
+        String dominio = request.getParameter("dominio");
+        String cvv = request.getParameter("cvv");
+        String nomeIntestatario = request.getParameter("nomeIntestatario");
+        String cognomeIntestatario = request.getParameter("cognomeIntestatario");
+        String numeroCarta = request.getParameter("numeroCarta");
+        LocalDate dataScadenza = LocalDate.parse(request.getParameter("dataScadenza"));
+        double quota = Double.parseDouble(request.getParameter("quota"));
+        Acquisto a = new Acquisto();
+        a.setNome(u.getNome());
+        a.setCognome(u.getCognome());   
+        a.setMail(u.getEmail());
+        a.setCvv(cvv);
+        a.setDataScadenza(dataScadenza);
+        a.setNomeIntestatario(nomeIntestatario);    
+        a.setCognomeIntestatario(cognomeIntestatario);
+        a.setNumeroCarta(numeroCarta);
+        a.setQuota(quota);
+        //a.setId(lastIdAcquisto++);
 
         // check if domain already exists
         for (Dominio d : domini.values()) {
-            if (d.getDominio().equals(dominio.getDominio()) && d.getDataScadenza().isAfter(LocalDate.now()) ) {
+            if (d.getDominio().equals(dominio) && d.getDataScadenza().isAfter(LocalDate.now()) ) {
                 return Response.status(Status.CONFLICT).build();
             }
         }
-        dominio.setId(lastId++);
-        dominio.setProprietario(u.getId());
-        dominio.setDataRegistrazione(LocalDate.now());
-        domini.put(dominio.getId(), dominio);
+
+        Dominio d = new Dominio();
+        d.setId(lastId++);
+        d.setProprietario(u.getId());
+        d.setDataRegistrazione(LocalDate.now());
+        domini.put(d.getId(), d);
+        //acquisti.put(a.getId(), a);
         return Response.ok().build();
 
     }
