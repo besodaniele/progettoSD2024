@@ -49,11 +49,11 @@ public class UtenteResources {
     // per testare se viene aggiunto l'utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
+    public Response getAll() { 
         if (utenti != null)
             return Response.ok(utenti).build();
         else
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.ok().build();
 
     }
 
@@ -61,6 +61,9 @@ public class UtenteResources {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrazione(Utente utente) {
+        if (utente.getCognome()==null || utente.getNome()==null || utente.getEmail()==null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
         for (Utente u : utenti.values()) {
             if (u.getEmail().equals(utente.getEmail())) {
                 return Response.status(Status.CONFLICT).build();
@@ -79,7 +82,7 @@ public class UtenteResources {
     @Path("/login")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@QueryParam("id") int id, @Context HttpServletRequest request) {
+    public Response login(@PathParam("id") int id, @Context HttpServletRequest request) {
         Utente u = utenti.get(id);
         if (u != null) {
             var sessione = request.getSession();

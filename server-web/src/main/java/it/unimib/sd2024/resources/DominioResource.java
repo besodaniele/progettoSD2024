@@ -74,7 +74,7 @@ public class DominioResource {
             }
             return Response.ok(currentDomains).build();
         } else
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.ok().build();
     }
 
     // ricerca di un dominio

@@ -1,40 +1,74 @@
 # Progetto Sistemi Distribuiti 2023-2024 - API REST
 
-Documentare qui l'API REST progettata. Di seguito è presente un esempio.
-
 **Attenzione**: l'unica rappresentazione ammessa è in formato JSON. Pertanto vengono assunti gli header `Content-Type: application/json` e `Accept: application/json`.
 
-## `/contacts`
-
-Ogni risorsa ha la sua sezione dedicata con i metodi ammessi. In questo caso si riferisce alla risorsa `/contacts`.
+## `/utente`
 
 ### GET
+**attenzione** DA RIMUOVERE
 
-**Descrizione**: breve descrizione di cosa fa il metodo applicato alla risorsa. In questo caso restituisce l'elenco dei contatti presenti.
+**Descrizione**: Restituisce l'elenco degli utenti registrati.
 
-**Parametri**: elenco dei parametri. In questo caso non sono previsti. Se la risorsa fosse stata `/contacts/{id}` allora andava specificato cosa deve essere `{id}`.
+**Parametri**: non sono previsti parametri.
 
-**Header**: solo gli header importanti. In questo caso nessuno oltre a quelli già impostati automaticamente dal client. Si può evitare di specificare gli hader riguardanti la rappresentazione dei dati (JSON).
+**Header**: nessuno oltre quelli di default del client.
 
-**Body richiesta**: cosa ci deve essere nel body della richiesta (se previsto). In questo caso nulla perché non è previsto.
+**Body richiesta**: non previsto body.
 
-**Risposta**: cosa viene restituito in caso di successo. In questo caso una lista con ogni elemento un contatto con i seguenti campi: `id` (intero), `name` (stringa) e `number` (stringa).
+**Risposta**: viene restituita una lista di utenti registrati, con campi `id` (intero), `nome` (stringa), `cognome` (stringa), `email` (stringa).
 
-**Codici di stato restituiti**: elenco dei codici di stato restituiti in caso di successo e di fallimento. In questo caso restituisce sempre `200 OK`. Viene dato per assunto che in caso di problemi lato server si restituisce `500 Internal Server Error`, non è necessario specificarlo ogni volta.
+**Codici di stato restituiti**: viene restituito sempre il codice `200 ok`.
 
 ### POST
 
-**Descrizione**: aggiunge un contatto alla rubrica telefonica.
+**Descrizione**: registra un utente al sistema.
 
 **Parametri**: nessuno.
 
 **Header**: nessuno.
 
-**Body richiesta**: singolo contatto con i campi `name` e `number`.
+**Body richiesta**: singolo utente con i campi `nome`, `cognome`, `email`, eventuali id inseriti verranno ignorati e ne verrà assegnato uno server-side.
 
-**Risposta**: body vuoto e la risorsa creata è indicata nell'header `Location`.
+**Risposta**: body vuoto e la risorsa creata è la risorsa è identificata dall'URI http://localhost:8080/utente/{id}, dove {id} è l'identificativo univoco dell'utente.
 
 **Codici di stato restituiti**:
 
 * 201 Created: successo.
+* 409 Conflict: un utente con la stessa email è già registrato 
 * 400 Bad Request: c'è un errore del client (JSON, campo mancante o altro).
+## `/utente/login/{id}`
+
+### GET
+
+**Descrizione**: effettua il login.
+
+**Parametri**: un parametro del percorso `id` che rappresenta l'utenza con cui fare il login.
+
+**Header**: nessuno.
+
+**Body richiesta**: nessuno.
+
+**Risposta**: viene restituita una rappresentazione dell'utente loggato, con campi `id` (intero), `nome` (stringa), `cognome` (stringa), `email` (stringa).
+
+**Codici di stato restituiti**:
+
+* 200 Ok: successo.
+* 404 Not found: non esiste un utente con l'id passato come parametro
+## `/dominio`
+
+### GET
+
+**Descrizione**: restituisce una lista di domini registrati dall'utente correntemente loggato.
+
+**Parametri**: nessuno.
+
+**Header**: nessuno.
+
+**Body richiesta**: nessuno.
+
+**Risposta**: viene restituita una lista di domini, con campi `id` (intero), `proprietario` (intero), `dominio`(stringa), `dataRegistrazione` (data), `dataScadenza` (data).
+
+**Codici di stato restituiti**:
+
+* 200 Ok: successo.
+* 401 Unauthorized: il login non è stato effettuato, non è possibile vedere alcun dominio
