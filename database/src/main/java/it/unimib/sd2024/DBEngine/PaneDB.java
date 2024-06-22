@@ -26,17 +26,16 @@ public class PaneDB {
         return pane;
     }
 
+    public JsonNode getTable(String tableName) {
+        return tabelle.get(tableName);
+    }
+
     public void createTable(String tableName, JsonNode tabella) {
         tabelle.put(tableName, tabella);
     }
 
-    public void cond(){
-        
-    }
-
-    public JsonNode get(String tableName, String key, String param) {
+    public JsonNode get(JsonNode jn, String key, String param) {
         try {
-            JsonNode jn = tabelle.get(tableName);
             ObjectNode on = (ObjectNode) jn;
             Iterator<Entry<String, JsonNode>> keys = jn.fields();
             ArrayList<String> keysToRemove = new ArrayList<>();
@@ -76,7 +75,7 @@ public class PaneDB {
             }
 
             return on;
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             return null;
         }
     }
