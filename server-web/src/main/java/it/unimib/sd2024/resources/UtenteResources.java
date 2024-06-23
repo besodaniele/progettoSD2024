@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-
 import it.unimib.sd2024.beans.Utente;
 import jakarta.json.JsonException;
 import jakarta.json.bind.JsonbBuilder;
@@ -49,7 +48,7 @@ public class UtenteResources {
     // per testare se viene aggiunto l'utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() { 
+    public Response getAll() {
         if (utenti != null)
             return Response.ok(utenti).build();
         else
@@ -61,7 +60,7 @@ public class UtenteResources {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registrazione(Utente utente) {
-        if (utente.getCognome()==null || utente.getNome()==null || utente.getEmail()==null) {
+        if (utente.getCognome() == null || utente.getNome() == null || utente.getEmail() == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }
         for (Utente u : utenti.values()) {
@@ -79,7 +78,7 @@ public class UtenteResources {
 
     }
 
-    @Path("/login")
+    @Path("/login/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@PathParam("id") int id, @Context HttpServletRequest request) {

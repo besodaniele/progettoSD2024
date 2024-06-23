@@ -89,63 +89,63 @@ public class DominioResource {
             return Response.status(Status.NOT_FOUND).build();
     }
 
+    @Path("/{dominio}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    //dati acquisti come query param???
-    public Response addDominio(@Context HttpServletRequest request) {
+    // dati acquisti come query param???
+    public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
+            @PathParam("dominio") String dominio) {
         // check if user logged in
         Utente u = (Utente) request.getSession().getAttribute("utente");
         if (u == null) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
-        //sto effettuando un acquisto -> aggiungo anche l'acquisto al db
-        String dominio = request.getParameter("dominio");
-        String cvv = request.getParameter("cvv");
-        String nomeIntestatario = request.getParameter("nomeIntestatario");
-        String cognomeIntestatario = request.getParameter("cognomeIntestatario");
-        String numeroCarta = request.getParameter("numeroCarta");
-        LocalDate dataScadenza = LocalDate.parse(request.getParameter("dataScadenza"));
-        double quota = Double.parseDouble(request.getParameter("quota"));
-        Acquisto a = new Acquisto();
-        a.setNome(u.getNome());
-        a.setCognome(u.getCognome());   
-        a.setMail(u.getEmail());
-        a.setCvv(cvv);
-        a.setDataScadenza(dataScadenza);
-        a.setNomeIntestatario(nomeIntestatario);    
-        a.setCognomeIntestatario(cognomeIntestatario);
-        a.setNumeroCarta(numeroCarta);
-        a.setQuota(quota);
-        //a.setId(lastIdAcquisto++);
+        // sto effettuando un acquisto -> aggiungo anche l'acquisto al db
+        acquisto.setCognome(u.getCognome());
+        acquisto.setMail(u.getEmail());
+        acquisto.setNome(u.getNome());
+        acquisto.setTipo("acquisto");
+        // a.setId(lastIdAcquisto++);
 
         // check if domain already exists
         for (Dominio d : domini.values()) {
-            if (d.getDominio().equals(dominio) && d.getDataScadenza().isAfter(LocalDate.now()) ) {
+            if (d.getDominio().equals(dominio) && d.getDataScadenza().isAfter(LocalDate.now())) {
                 return Response.status(Status.CONFLICT).build();
             }
         }
 
         Dominio d = new Dominio();
+        d.setDominio(dominio);
         d.setId(lastId++);
         d.setProprietario(u.getId());
         d.setDataRegistrazione(LocalDate.now());
+        d.setDataScadenza(d.getDataRegistrazione().plusYears(acquisto.getNumAnni()));
         domini.put(d.getId(), d);
-        //acquisti.put(a.getId(), a);
+        // acquisti.put(a.getId(), a);
         return Response.ok().build();
 
     }
 
     // rinnovo di un dominio
+    @Path("/{dominio}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(@Context HttpServletRequest request, Dominio dominio) {
-        //TODO modificare
-        Dominio d = domini.get(dominio.getId());
-
-
-
+    public Response updateDominio(@Context HttpServletRequest request, @PathParam("dominio") String dominio,
+            Acquisto acquisto) {
+        /*
+         * logica di update con db
+         * prima chiedo risorse al db
+         * la modifico lato server e chiedo al db di aggiornare
+         * il db semplicemente rimuove la vecchia risorse e inserisce la nuova
+         */
+        Dominio d = null;
+        for (Dominio x : domini.values()) {
+            if (x.getDominio().equals(dominio)) {
+                d = x;
+            }
+        }
 
         if (d == null) {
             return Response.status(Status.NOT_FOUND).build();
@@ -156,28 +156,24 @@ public class DominioResource {
             return Response.status(Status.UNAUTHORIZED).build();
         }
 
-        if (!d.getDataScadenza().isBefore(LocalDate.now())) {
-            // inserisco acquisto nel db
+        acquisto.setNome(u.getNome());
+        acquisto.setCognome(u.getCognome());
+        acquisto.setMail(u.getEmail());
+        acquisto.setTipo("rinnovo");
+        // a.setId(lastIdAcquisto++);
+        int anniMancanti = d.getDataScadenza().getYear() - LocalDate.now().getYear();
 
+        if (!d.getDataScadenza().isBefore(LocalDate.now()) &&
+                anniMancanti + acquisto.getNumAnni() <= 10) {
+            // inserisco acquisto nel db
+            // acquisti.put(a.getId(), a);
+            d.setDataScadenza(d.getDataScadenza().plusYears(acquisto.getNumAnni()));
             // agiorno il dominio nel db
-            domini.put(dominio.getId(), dominio);
+            domini.put(d.getId(), d);
             return Response.ok().build();
         } else {
             return Response.status(Status.UNAUTHORIZED).build();
         }
 
-    }
-    @Path("/testDB")
-    @GET
-    public Response testDB() {
-        try {
-            Connection conn = new Connection();
-            return Response.ok().build();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }
-        
     }
 }
