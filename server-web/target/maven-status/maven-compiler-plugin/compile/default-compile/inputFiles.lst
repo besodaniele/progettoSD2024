@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\AcquistoResource.java
 C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\DominioResource.java
 C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\UtenteResources.java
@@ -7,3 +8,14 @@ C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\
 C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\JsonException.java
 C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\Connection.java
 C:\Users\39328\Desktop\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\JsonParsingException.java
+=======
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\beans\Dominio.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\Connection.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\JsonParsingException.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\beans\Acquisto.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\beans\Utente.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\JsonException.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\AcquistoResource.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\DominioResource.java
+C:\Users\danie\Desktop\code\sistemi_distribuiti\progettoSD2024\server-web\src\main\java\it\unimib\sd2024\resources\UtenteResources.java
+>>>>>>> 043b615471225797d0cd5025513947746be072b8

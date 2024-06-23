@@ -3,23 +3,25 @@ package it.unimib.sd2024.DBEngine;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 // la classe è una singleton
 public class PaneDB {
     private final HashMap<String, JsonNode> tabelle;
     private static PaneDB pane = null;
-
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     private PaneDB() {
         this.tabelle = new HashMap<>();
     }
 
     //Singleton
-    public static PaneDB getDB() {
+    public static synchronized PaneDB getDB() {
         if (pane == null) {
             pane = new PaneDB();
         }
@@ -33,13 +35,24 @@ public class PaneDB {
     public void createTable(String tableName, JsonNode tabella) {
         tabelle.put(tableName, tabella);
     }
-
+    
     public JsonNode get(JsonNode jn, String key, String param) {
         try {
             JsonNode jnCopy = jn.deepCopy();
             ObjectNode on = (ObjectNode) jnCopy;
             Iterator<Entry<String, JsonNode>> keys = jnCopy.fields();
             ArrayList<String> keysToRemove = new ArrayList<>();
+            
+            if(!key.equals("*") && param.equals("*")){
+                on = (ObjectNode) on.get(key);
+                ObjectNode json = mapper.createObjectNode();
+                Iterator<Entry<String, JsonNode>> fields = on.fields();
+                while(fields.hasNext()){
+                    Entry<String, JsonNode> entry = fields.next();
+                    json.set(entry.getKey(), entry.getValue());
+                }
+                return json;
+            }
             
             if(!(key.equals("*"))){
                 while(keys.hasNext()){
@@ -117,4 +130,22 @@ public class PaneDB {
         return false;
     }
 
+    public String getLastIndex(String tableName) {
+        JsonNode jn = tabelle.get(tableName);
+        ObjectNode on = (ObjectNode) jn;
+        Iterator<Entry<String, JsonNode>> keys = on.fields();
+        List<Integer> keysList = new ArrayList<>();
+        while(keys.hasNext()){
+            Entry<String, JsonNode> entry = keys.next();
+            String k = entry.getKey();
+            keysList.add(Integer.valueOf(k));
+        }
+        int lastKey = 0;
+        for (int k : keysList) {
+            if(k > lastKey){
+                lastKey = k;
+            }
+        }
+        return String.valueOf(lastKey);
+    }
 }
