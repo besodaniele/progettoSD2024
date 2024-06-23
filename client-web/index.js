@@ -10,7 +10,7 @@ async function accessoUtente(event)
     const id = document.getElementById('id').value;
 
     try {
-        const response = await fetch(API_URI + '/login?id=' + id, {
+        const response = await fetch(API_URI + '/utente/login/' + id, {
             method: 'GET'
         });
 
@@ -22,6 +22,7 @@ async function accessoUtente(event)
         else
         {
             console.error('Errore nel login');
+            document.getElementById('err').innerText = 'Errore nel login';
         }
     } catch (error) {
         console.error('Error:', error);
