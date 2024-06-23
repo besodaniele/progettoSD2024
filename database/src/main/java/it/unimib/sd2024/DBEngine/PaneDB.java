@@ -137,7 +137,7 @@ public class PaneDB {
         while(keys.hasNext()){
             Entry<String, JsonNode> entry = keys.next();
             String k = entry.getKey();
-            keysList.add(Integer.parseInt(k));
+            keysList.add(Integer.valueOf(k));
         }
         int lastKey = 0;
         for (int k : keysList) {
