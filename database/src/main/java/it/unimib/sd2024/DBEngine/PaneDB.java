@@ -35,13 +35,24 @@ public class PaneDB {
     public void createTable(String tableName, JsonNode tabella) {
         tabelle.put(tableName, tabella);
     }
-
+    
     public JsonNode get(JsonNode jn, String key, String param) {
         try {
             JsonNode jnCopy = jn.deepCopy();
             ObjectNode on = (ObjectNode) jnCopy;
             Iterator<Entry<String, JsonNode>> keys = jnCopy.fields();
             ArrayList<String> keysToRemove = new ArrayList<>();
+            
+            if(!key.equals("*") && param.equals("*")){
+                on = (ObjectNode) on.get(key);
+                ObjectNode json = mapper.createObjectNode();
+                Iterator<Entry<String, JsonNode>> fields = on.fields();
+                while(fields.hasNext()){
+                    Entry<String, JsonNode> entry = fields.next();
+                    json.set(entry.getKey(), entry.getValue());
+                }
+                return json;
+            }
             
             if(!(key.equals("*"))){
                 while(keys.hasNext()){
@@ -77,16 +88,6 @@ public class PaneDB {
                 }
             }
 
-            if(!key.equals("*") && param.equals("*")){
-                on = (ObjectNode) on.get(key);
-                ObjectNode json = mapper.createObjectNode();
-                Iterator<Entry<String, JsonNode>> fields = on.fields();
-                while(fields.hasNext()){
-                    Entry<String, JsonNode> entry = fields.next();
-                    json.set(entry.getKey(), entry.getValue());
-                }
-                return json;
-            }
             return on;
         } catch (NullPointerException e) {
             return null;
