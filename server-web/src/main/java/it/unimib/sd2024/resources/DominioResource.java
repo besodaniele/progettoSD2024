@@ -64,17 +64,20 @@ public class DominioResource {
         if (u == null) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
-        List<Dominio> currentDomains = new ArrayList<Dominio>();
-        if (domini != null) {
-
-            for (Dominio d : domini.values()) {
-                if (d.getProprietario() == u.getId()) {
-                    currentDomains.add(d);
-                }
+        String id =""+u.getId();
+        try {
+            Connection conn = new Connection();
+            conn.send("get domini.*.* where proprietario="+id);
+            String response = conn.receive();
+            conn.close();
+            if (response.equals("400")) {
+                return Response.status(Status.BAD_REQUEST).build();
             }
-            return Response.ok(currentDomains).build();
-        } else
-            return Response.ok().build();
+            return Response.ok(response).build();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // ricerca di un dominio

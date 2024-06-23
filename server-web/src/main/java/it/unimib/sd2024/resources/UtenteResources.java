@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+
+import it.unimib.sd2024.Connection;
 import it.unimib.sd2024.beans.Utente;
 import jakarta.json.JsonException;
 import jakarta.json.bind.JsonbBuilder;
@@ -28,32 +30,21 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("utente")
 public class UtenteResources {
-    private static Map<Integer, Utente> utenti = new HashMap<Integer, Utente>();
-    private static int lastId = 0;
-    static {
-        Utente u1 = new Utente();
-        u1.setNome("Mario");
-        u1.setCognome("Rossi");
-        u1.setEmail("m.rossi@gmail.com");
-        u1.setId(lastId++);
-        utenti.put(u1.getId(), u1);
-        Utente u2 = new Utente();
-        u2.setNome("Luigi");
-        u2.setCognome("Verdi");
-        u2.setEmail("l.verdi@gmail.com");
-        u2.setId(lastId++);
-        utenti.put(u2.getId(), u2);
-    }
-
     // per testare se viene aggiunto l'utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        if (utenti != null)
-            return Response.ok(utenti).build();
-        else
-            return Response.ok().build();
+        try {
+            Connection conn = new Connection();
+            conn.send("get utenti.*.*");
+            String response = conn.receive();
 
+            conn.close();
+            return Response.ok(response).build();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @POST
@@ -63,32 +54,59 @@ public class UtenteResources {
         if (utente.getCognome() == null || utente.getNome() == null || utente.getEmail() == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }
-        for (Utente u : utenti.values()) {
-            if (u.getEmail().equals(utente.getEmail())) {
-                return Response.status(Status.CONFLICT).build();
-            }
-        }
-        utente.setId(lastId++);
-        utenti.put(utente.getId(), utente);
         try {
+            Connection conn = new Connection();
+            conn.send("getLastIndex utenti");
+            int id = Integer.parseInt(conn.receive()) + 1;
+            utente.setId(id);
+            conn.send("insert utenti " + id + " " + JsonbBuilder.create().toJson(utente));
+            String response = conn.receive();
+            if (response.equals("409")) {
+                return Response.status(Status.CONFLICT).build();
+            } else if (response.equals("400")) {
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            conn.close();
             return Response.created(new URI("http://localhost:8080/utente/" + utente.getId())).build();
-        } catch (URISyntaxException e) {
+
+        } catch (Exception e) {
+            e.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     @Path("/login/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@PathParam("id") int id, @Context HttpServletRequest request) {
-        Utente u = utenti.get(id);
-        if (u != null) {
-            var sessione = request.getSession();
-            sessione.setAttribute("utente", u);
-            return Response.ok(u).build();
-        } else {
-            return Response.status(Status.NOT_FOUND).build();
+
+        try {
+            Connection conn = new Connection();
+            conn.send("get utenti." + id + ".*");
+            String response = conn.receive();
+
+            if (response.equals("404")) {
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            if (response.equals("400")) {
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            conn.close();
+
+            // attendere correzione get oggetto singolo
+            Utente u = JsonbBuilder.create().fromJson(response, Utente.class);
+            
+            if (u != null) {
+                var sessione = request.getSession();
+                sessione.setAttribute("utente", u);
+                return Response.ok(u).build();
+            } else {
+                return Response.status(Status.NOT_FOUND).build();
+            }
+        } catch (JsonbException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        } catch (IOException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 

@@ -29,6 +29,7 @@ public class Connection {
     }
 
     public void close() throws IOException {
+        out.println("close");
         in.close();
         out.close();
         socket.close();
