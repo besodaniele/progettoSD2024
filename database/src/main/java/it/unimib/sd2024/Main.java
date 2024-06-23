@@ -12,7 +12,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import it.unimib.sd2024.DBEngine.PaneDB;
+import it.unimib.sd2024.DBEngine.DBParser;
+import it.unimib.sd2024.DBEngine.PaneDB; 
 
 /**
  * Classe principale in cui parte il database.
@@ -59,34 +60,14 @@ public class Main {
             try {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                System.out.println("ecco la query:");
 
-                //test
-                //System.out.println(PaneDB.getDB().delete("utenti", "m.rossi@gmail.com"));
-                /*
-                String json = "{ \"nome\" : \"Mario\", \"cognome\" : \"bianchi\", \"email\" : \"m.rossi@gmail.com\"}";
-                JsonNode value = mapper.readTree(json);
-                System.out.println(PaneDB.getDB().update("utenti", "m.rossi@gmail.com", value));
-                JsonNode result=PaneDB.getDB().get("utenti", "m.rossi@gmail.com", "cognome");
-                if(result!=null){
-                    System.out.println(result);
-                }else{
-                    System.out.println("null");
-                } 
-                String json1 = "{ \"nome\" : \"Yang\", \"cognome\" : \"Shi\", \"email\" : \"y.shi@gmail.com\"}";
-                JsonNode value1 = mapper.readTree(json1);
-                System.out.println(PaneDB.getDB().insert("utenti", "y.shi@gmail.com", value1));
-                JsonNode result1=PaneDB.getDB().get("utenti", "y.shi@gmail.com", "cognome");
-                System.out.println(result1);
-                
+                /* var commando = in.readLine();
+                var risposta = DBParser.getParser().parse(commando);
+
+                out.println(risposta);
                 */
-                JsonNode result=PaneDB.getDB().get("utenti", "*", "nome");
-                if(result!=null){
-                    System.out.println(result);
-                }else{
-                    System.out.println("null");
-                } 
-                System.out.println("finished");
+                System.out.println(DBParser.getParser().parse("get utenti.*.* where nome=Luca"));
+                System.out.println(PaneDB.getDB().getTable("utenti").toString());
 
                 in.close();
                 out.close();
