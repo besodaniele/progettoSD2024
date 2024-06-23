@@ -11,8 +11,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class DBParser {
     private static DBParser parser = null;
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper;
     private DBParser() {
+        mapper = new ObjectMapper();
     }
 
     public static DBParser getParser() {
