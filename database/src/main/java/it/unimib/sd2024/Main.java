@@ -63,9 +63,11 @@ public class Main {
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 while (!commando.equals("close")) {
                     commando = in.readLine();
-                    var risposta = DBParser.getParser().parse(commando);
-
-                    out.println(risposta);
+                    
+                    if(!commando.equals("close")){
+                        var risposta = DBParser.getParser().parse(commando);
+                        out.println(risposta);
+                    }
                 }
                 in.close();
                 out.close();
