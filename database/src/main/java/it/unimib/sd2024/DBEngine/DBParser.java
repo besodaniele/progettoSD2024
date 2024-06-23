@@ -29,7 +29,6 @@ public class DBParser {
             JsonNode tabella = PaneDB.getDB().getTable(commandSplit[1]);
             switch (commandSplit[0]) {
                 case "get":
-                    // get dominio.*.* where utente = "m.rossi"
                     // parse tabella.key.param
                     String[] getSplit = commandSplit[1].split("\\.");
                     // prendo la tabella dal database
@@ -103,10 +102,12 @@ public class DBParser {
                     } catch (JsonProcessingException e) {
                         return "400";
                     }
+                case "getLastIndex":
+                    return PaneDB.getDB().getLastIndex(commandSplit[1]);
                 default:
                     return "400";
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
             return "400";
         }
 
