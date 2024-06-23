@@ -1,27 +1,32 @@
 {
-    "m.rossi@gmail.com": {
+    "0": {
+        "id": 0,
         "nome": "Mario",
         "cognome": "Rossi",
-        "mail": "m.rossi@gmail.com"
+        "email": "m.rossi@gmail.com"
     },
-    "l.bianchi@example.com": {
+    "1": {
+        "id": 1,
         "nome": "Luca",
         "cognome": "Bianchi",
-        "mail": "l.bianchi@example.com"
+        "email": "l.bianchi@example.com"
     },
-    "g.verdi@example.com": {
+    "2": {
+        "id": 2,
         "nome": "Giulia",
         "cognome": "Verdi",
-        "mail": "g.verdi@example.com"
+        "email": "g.verdi@example.com"
     },
-    "a.neri@example.com": {
+    "3": {
+        "id": 3,
         "nome": "Anna",
         "cognome": "Neri",
-        "mail": "a.neri@example.com"
+        "email": "a.neri@example.com"
     },
-    "p.gialli@example.com": {
+    "4": {
+        "id": 4,
         "nome": "Paolo",
         "cognome": "Gialli",
-        "mail": "p.gialli@example.com"
+        "email": "p.gialli@example.com"
     }
 }

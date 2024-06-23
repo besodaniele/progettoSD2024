@@ -1,12 +1,14 @@
 {
-    "unimib.it": {
+    "0": {
         "dataRegistrazione": "2024-06-16",
         "dataScadenza": "2024-06-16",
         "dominio": "unimib.it",
-        "proprietario": {
-            "cognome": "Rossi",
-            "email": "m.rossi@gmail.com",
-            "nome": "Mario"
-        }
+        "proprietario": 0
+    },
+    "1": {
+        "dataRegistrazione": "2024-06-16",
+        "dataScadenza": "2024-06-16",
+        "dominio": "ciao.it",
+        "proprietario": 1
     }
 }
