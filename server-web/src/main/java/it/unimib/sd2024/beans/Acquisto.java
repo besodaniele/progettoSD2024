@@ -4,10 +4,18 @@ import java.time.LocalDate;
 
 public class Acquisto {
 
-    private String nome,cognome,mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario;
+    private String nome,cognome,mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo;
     private LocalDate dataScadenza;
-    private int cliente, id;
+    private int cliente, id,numAnni;
     private double quota;
+
+    public int getNumAnni() {
+        return numAnni;
+    }
+
+    public void setNumAnni(int numAnni) {
+        this.numAnni = numAnni;
+    }
 
     public String getNome() {
         return nome;
@@ -95,6 +103,14 @@ public class Acquisto {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
 }
