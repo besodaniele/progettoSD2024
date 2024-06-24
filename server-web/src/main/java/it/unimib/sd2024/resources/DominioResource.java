@@ -118,10 +118,8 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
 
     @Produces(MediaType.APPLICATION_JSON)
-    // dati acquisti come query param???
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
             @PathParam("dominio") String dominio) {
-        // check if user logged in
         Utente u = (Utente) request.getSession().getAttribute("utente");
         if (u == null) {
             return Response.status(Status.UNAUTHORIZED).build();
