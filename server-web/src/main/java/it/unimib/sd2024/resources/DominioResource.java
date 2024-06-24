@@ -27,6 +27,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -37,13 +38,8 @@ public class DominioResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@Context HttpServletRequest request) {
-        Utente u = (Utente) request.getSession().getAttribute("utente");
-        if (u == null) {
-            return Response.status(Status.UNAUTHORIZED).build();
-        }
+    public Response getAll(@QueryParam("id") int id) {
 
-        String id = "" + u.getId();
         try {
             Connection conn = new Connection();
             conn.send("get domini.*.* where proprietario=" + id);
@@ -118,11 +114,8 @@ public class DominioResource {
 
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
-            @PathParam("dominio") String dominio) {
-        Utente u = (Utente) request.getSession().getAttribute("utente");
-        if (u == null) {
-            return Response.status(Status.UNAUTHORIZED).build();
-        }
+            @PathParam("dominio") String dominio, @QueryParam("id") int id) {
+
         Connection conn;
         String query = "get domini.*.* where dominio=" + dominio;
 
@@ -148,7 +141,7 @@ public class DominioResource {
             conn.send("getLastIndex domini");
             int lastId = Integer.parseInt(conn.receive()) + 1;
             d.setId(lastId);
-            d.setProprietario(u.getId());
+            d.setProprietario(id);
             d.setDataRegistrazione(LocalDate.now());
             d.setDataScadenza(d.getDataRegistrazione().plusYears(acquisto.getNumAnni()));
             conn.send("insert domini " + lastId + " " + JsonbBuilder.create().toJson(d));
@@ -163,6 +156,7 @@ public class DominioResource {
 
             conn.send("getLastIndex acquisti");
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
+            acquisto.setCliente(id);
             acquisto.setId(lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
@@ -199,15 +193,8 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(@Context HttpServletRequest request, @PathParam("dominio") String dominio,
+    public Response updateDominio(@QueryParam ("id") int id, @PathParam("dominio") String dominio,
             Acquisto acquisto) {
-        /*
-         * logica di update con db
-         * prima chiedo risorse al db
-         * la modifico lato server e chiedo al db di aggiornare
-         * il db semplicemente rimuove la vecchia risorse e inserisce la nuova
-         */
-        Utente u = (Utente) request.getSession().getAttribute("utente");
         Connection conn;
         System.out.println();
         String query = "get domini.*.* where dominio=" + dominio;
@@ -225,9 +212,9 @@ public class DominioResource {
                 var d = (Map) domini.get(k);
                 LocalDate dataScadenza = LocalDate.parse((String) d.get("dataScadenza"));
 
-                int id = Integer.parseInt(d.get("proprietario").toString());
+                int idDom = Integer.parseInt(d.get("proprietario").toString());
 
-                if (id == u.getId()
+                if (id == idDom
                         && dataScadenza.isAfter(LocalDate.now())) {
                     dominioObject = d;
                 }
@@ -264,7 +251,7 @@ public class DominioResource {
 
             conn.send("getLastIndex acquisti");
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
-            acquisto.setCliente(u.getId());
+            acquisto.setCliente(id);
             acquisto.setId(lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
@@ -288,6 +275,7 @@ public class DominioResource {
         }
 
     }
+
     @GET
     @Path("/testDB")
     @Produces(MediaType.APPLICATION_JSON)

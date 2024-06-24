@@ -6,6 +6,8 @@ public class Acquisto {
 
     private String mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo,dominio;
     private LocalDate dataScadenza;
+    private int cliente, id,numAnni;
+    private double quota;
     public String getDominio() {
         return dominio;
     }
@@ -13,9 +15,6 @@ public class Acquisto {
     public void setDominio(String dominio) {
         this.dominio = dominio;
     }
-
-    private int cliente, id,numAnni;
-    private double quota;
 
     public int getNumAnni() {
         return numAnni;
