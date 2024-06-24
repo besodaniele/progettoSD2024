@@ -46,7 +46,7 @@ public class PaneDB {
             if(!key.equals("*") && param.equals("*")){
                 Object chiave = coppia.get(key);
                 Map<String, Object> result = new HashMap<>();
-                Iterator<Entry<String, Object>> fields = ((Map) result).entrySet().iterator();
+                Iterator<Entry<String, Object>> fields = ((Map) chiave).entrySet().iterator();
                 while(fields.hasNext()){
                     Map.Entry<String, Object> entry = fields.next();
                     result.put(entry.getKey(), entry.getValue());
