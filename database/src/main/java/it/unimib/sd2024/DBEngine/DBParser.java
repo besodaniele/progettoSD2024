@@ -28,28 +28,20 @@ public class DBParser {
     public String parse(String command) {
         try {
             String[] commandSplit = command.split(" ");
-            Map tabella = PaneDB.getDB().getTable(commandSplit[1]);
+            Map<String, Object> tabella = PaneDB.getDB().getTable(commandSplit[1]);
             switch (commandSplit[0]) {
                 case "get":
                     // parse tabella.key.param
                     String[] getSplit = commandSplit[1].split("\\.");
                     // prendo la tabella dal database
                     tabella = PaneDB.getDB().getTable(getSplit[0]);
-                    //coppia 
-                    Map<String, Object> coppia = new HashMap<>();
-                    Iterator<Map.Entry<String, Object>> chiavi = tabella.entrySet().iterator();
-                    while (chiavi.hasNext()) {
-                        Map.Entry<String, Object> entry = chiavi.next();
-                        coppia.put(entry.getKey(), entry.getValue());
-                    }
+                    //copia 
+                    Map<String, Object> copia = PaneDB.getDB().deepCopyMap(tabella);
+                    
 
                     //tabella di risultato
-                    Map<String, Object> tabellaResult = new HashMap<>();
-                    chiavi = tabella.entrySet().iterator();
-                    while (chiavi.hasNext()) {
-                        Map.Entry<String, Object> entry = chiavi.next();
-                        tabellaResult.put(entry.getKey(), entry.getValue());
-                    }
+                    Map<String, Object> tabellaResult = PaneDB.getDB().deepCopyMap(tabella);
+                    
 
                     // se c'è una condizione where
 
@@ -57,7 +49,7 @@ public class DBParser {
                         String[] whereSplit = commandSplit[3].split("=");
                         String param = whereSplit[0];
                         String value = whereSplit[1];
-                        Map tabellaDiKey = PaneDB.getDB().get(coppia, getSplit[1], param);
+                        Map tabellaDiKey = PaneDB.getDB().get(copia, getSplit[1], param);
                         if(tabellaDiKey == null){
                             return "400";
                         }

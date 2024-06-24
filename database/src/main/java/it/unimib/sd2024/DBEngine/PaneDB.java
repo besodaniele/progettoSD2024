@@ -33,18 +33,30 @@ public class PaneDB {
         db.put(tableName, tabella);
     }
     
+    public static Map<String, Object> deepCopyMap(Map<String, Object> original) {
+        Map<String, Object> copy = new HashMap<>();
+        for (Map.Entry<String, Object> entry : original.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                // Ricorsivamente copia mappature annidate
+                value = deepCopyMap((Map<String, Object>) value);
+            }
+            // Altrimenti, si assume che il valore possa essere direttamente messo nella nuova mappa
+            copy.put(entry.getKey(), value);
+        }
+        return copy;
+    }
+
     public Map get(Map json, String key, String param) {
         try {
-            Map<String, Object> coppia = new HashMap<>();
-            Iterator<Map.Entry<String, Object>> keys = json.entrySet().iterator();
-            while (keys.hasNext()) {
-                Map.Entry<String, Object> entry = keys.next();
-                coppia.put(entry.getKey(), entry.getValue());
-            }
+            Map<String, Object> copia = deepCopyMap(json);
+            
+            Iterator<Map.Entry<String, Object>> keys = copia.entrySet().iterator();
+    
             ArrayList<String> keysToRemove = new ArrayList();
             
             if(!key.equals("*") && param.equals("*")){
-                Object chiave = coppia.get(key);
+                Object chiave = copia.get(key);
                 Map<String, Object> result = new HashMap<>();
                 Iterator<Entry<String, Object>> fields = ((Map) chiave).entrySet().iterator();
                 while(fields.hasNext()){
@@ -55,7 +67,7 @@ public class PaneDB {
             }
             
             if(!key.equals("*")){
-                keys = coppia.entrySet().iterator();
+                keys = copia.entrySet().iterator();
                 while(keys.hasNext()){
                     Map.Entry<String, Object> entry = keys.next();
                     String k = entry.getKey();
@@ -64,12 +76,12 @@ public class PaneDB {
                     }
                 }
                 for (String k : keysToRemove) {
-                    coppia.remove(k);
+                    copia.remove(k);
                 }
             }
 
             if(!param.equals("*")){
-                keys = coppia.entrySet().iterator();
+                keys = copia.entrySet().iterator();
                 while(keys.hasNext()){
                     Map.Entry<String, Object> entry = keys.next();
                     String k = entry.getKey();
@@ -86,11 +98,11 @@ public class PaneDB {
                         attributi.remove(field);
                     }
 
-                    coppia.put(k, attributi);
+                    copia.put(k, attributi);
                 }
             }
 
-            return coppia;
+            return copia;
         } catch (NullPointerException e) {
             return null;
         }
