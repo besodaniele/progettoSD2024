@@ -82,11 +82,10 @@ public class DominioResource {
                 var d = (Map) domini.get(k);
 
                 LocalDate dataScadenza = LocalDate.parse((String) d.get("dataScadenza"));
-        
-                
+
                 if (dataScadenza.isAfter(LocalDate.now())) {
                     finalResponse = finalResponse + JsonbBuilder.create().toJson(d);
-                    proprietario ="" + d.get("proprietario");
+                    proprietario = "" + d.get("proprietario");
                 }
             }
             if (proprietario == null) {
@@ -144,7 +143,7 @@ public class DominioResource {
             d.setDominio(dominio);
             conn.send("getLastIndex domini");
             int lastId = Integer.parseInt(conn.receive()) + 1;
-            d.setId(lastId);
+            d.setId("" + lastId);
             d.setProprietario(id);
             d.setDataRegistrazione(LocalDate.now());
             d.setDataScadenza(d.getDataRegistrazione().plusYears(acquisto.getNumAnni()));
@@ -162,7 +161,7 @@ public class DominioResource {
             conn.send("getLastIndex acquisti");
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
             acquisto.setCliente(id);
-            acquisto.setId(lastIdAcquisto);
+            acquisto.setId("" + lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
@@ -175,8 +174,6 @@ public class DominioResource {
                 System.out.println("Acquisto non valido");
                 return Response.status(Status.BAD_REQUEST).build();
             }
-
-
 
             conn.close();
 
@@ -202,7 +199,7 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(@QueryParam ("id") String id, @PathParam("dominio") String dominio,
+    public Response updateDominio(@QueryParam("id") String id, @PathParam("dominio") String dominio,
             Acquisto acquisto) {
         Connection conn;
         System.out.println();
@@ -242,7 +239,7 @@ public class DominioResource {
 
             Dominio d = new Dominio();
             d.setDominio(dominioObject.get("dominio").toString());
-            d.setId(Integer.parseInt(dominioObject.get("id").toString()));
+            d.setId(dominioObject.get("id").toString());
             d.setProprietario(dominioObject.get("proprietario").toString());
             d.setDataRegistrazione(LocalDate.parse(dominioObject.get("dataRegistrazione").toString()));
             d.setDataScadenza(
@@ -261,7 +258,7 @@ public class DominioResource {
             conn.send("getLastIndex acquisti");
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
             acquisto.setCliente(id);
-            acquisto.setId(lastIdAcquisto);
+            acquisto.setId("" + lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
