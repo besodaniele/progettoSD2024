@@ -43,6 +43,21 @@ public class PaneDB {
             }
             ArrayList<String> keysToRemove = new ArrayList();
             
+            if(!key.equals("*") && param.equals("*")){
+                keys = coppia.entrySet().iterator();
+                while(keys.hasNext()){
+                    Map.Entry<String, Object> entry = keys.next();
+                    String k = entry.getKey();
+                    if(!k.equals(key)){
+                        keysToRemove.add(k);
+                    }
+                }
+                for (String k : keysToRemove) {
+                    coppia.remove(k);
+                }
+                return coppia;
+            }
+
             if(!key.equals("*")){
                 keys = coppia.entrySet().iterator();
                 while(keys.hasNext()){
