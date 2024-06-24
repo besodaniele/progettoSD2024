@@ -77,7 +77,8 @@ public class DBParser {
                     }
                     
                     Map result = PaneDB.getDB().get(tabellaResult, getSplit[1], getSplit[2]);
-                    return result.toString().replaceAll("=", ":");
+                    String resultString = jsonb.toJson(result);
+                    return resultString;
 
                 case "insert":
                     if (PaneDB.getDB().get(tabella, commandSplit[2], "*") != null) {
