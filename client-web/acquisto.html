@@ -4,7 +4,7 @@
     <title>Domini</title>
   </head>
   <body data-server-no-reload>
-    <h2>Acquista D</h2>
+    <h2>Acquista </h2><h2 id="dominio"></h2>
 
     <form id="acquisto">
       <label for="durata">Durata registrazione: </label>
@@ -25,7 +25,10 @@
       <label for="cognome-intestatario">Cognome intestatario: </label>
       <input type="text" id="cognome-intest" name="cognome-intest">
       <br><br>
+      <button type="button" id="indietro">Indietro</button>
       <button type="submit" id="acquista">Acquista</button>
+      <br><br>
+      <p id="err"></p>
 
     <script src="acquisto.js"></script>
   </body>

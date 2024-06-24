@@ -17,7 +17,8 @@ async function accessoUtente(event)
         if(response.status === 200)
         {
             console.log('Utente loggato con successo');
-            window.location.href = "domini.html";
+            //document.cookie = "userId=" + id + "; path=/";
+            window.location.href = "domini.html?id=" + id;
         }
         else
         {

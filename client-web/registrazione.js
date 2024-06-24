@@ -63,7 +63,7 @@ async function inviaDati(event)
         }
 };
 
-async function init() 
+async function init()
 {
     document.getElementById("registrazione").addEventListener("submit", inviaDati);
 }
