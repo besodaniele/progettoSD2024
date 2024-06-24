@@ -55,7 +55,7 @@ public class UtenteResources {
         try {
             Connection conn = new Connection();
 
-            conn.send("add utenti." + utente.getId() + ".* " + JsonbBuilder.create().toJson(utente));
+            conn.send("insert utenti." + utente.getId() + ".* " + JsonbBuilder.create().toJson(utente));
             String response = conn.receive();
             conn.close();
             if (response.equals("400")) {
