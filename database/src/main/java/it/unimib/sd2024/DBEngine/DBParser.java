@@ -1,19 +1,22 @@
 package it.unimib.sd2024.DBEngine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbException;
+
+
 
 public class DBParser {
     private static DBParser parser = null;
-    private static ObjectMapper mapper;
+    private static Jsonb jsonb;
     private DBParser() {
-        mapper = new ObjectMapper();
+        jsonb = JsonbBuilder.create();
     }
 
     public static DBParser getParser() {
@@ -26,15 +29,28 @@ public class DBParser {
     public String parse(String command) {
         try {
             String[] commandSplit = command.split(" ");
-            JsonNode tabella = PaneDB.getDB().getTable(commandSplit[1]);
+            Map tabella = PaneDB.getDB().getTable(commandSplit[1]);
             switch (commandSplit[0]) {
                 case "get":
                     // parse tabella.key.param
                     String[] getSplit = commandSplit[1].split("\\.");
                     // prendo la tabella dal database
                     tabella = PaneDB.getDB().getTable(getSplit[0]);
-                    JsonNode tabellaCopy = tabella.deepCopy();
-                    JsonNode tabellaResult = tabella.deepCopy();
+                    //coppia 
+                    Map<String, Object> coppia = new HashMap<>();
+                    Iterator<Map.Entry<String, Object>> chiavi = tabella.entrySet().iterator();
+                    while (chiavi.hasNext()) {
+                        Map.Entry<String, Object> entry = chiavi.next();
+                        coppia.put(entry.getKey(), entry.getValue());
+                    }
+
+                    //tabella di risultato
+                    Map<String, Object> tabellaResult = new HashMap<>();
+                    chiavi = tabella.entrySet().iterator();
+                    while (chiavi.hasNext()) {
+                        Map.Entry<String, Object> entry = chiavi.next();
+                        coppia.put(entry.getKey(), entry.getValue());
+                    }
 
                     // se c'è una condizione where
 
@@ -42,26 +58,26 @@ public class DBParser {
                         String[] whereSplit = commandSplit[3].split("=");
                         String param = whereSplit[0];
                         String value = whereSplit[1];
-                        JsonNode tabellaDiKey = PaneDB.getDB().get(tabellaCopy, getSplit[1], param);
+                        Map tabellaDiKey = PaneDB.getDB().get(coppia, getSplit[1], param);
                         if(tabellaDiKey == null){
                             return "400";
                         }
                         ArrayList<String> keyToRemove = new ArrayList<>();
-                        Iterator<Entry<String, JsonNode>> keys = tabellaDiKey.fields();
+                        Iterator<Map.Entry<String, Object>> keys = tabellaDiKey.entrySet().iterator();
                         while(keys.hasNext()){
-                            Entry<String, JsonNode> entry = keys.next();
+                            Entry<String, Object> entry = keys.next();
                             String k = entry.getKey();
-                            ObjectNode on = (ObjectNode) entry.getValue();
-                            if(!on.get(param).asText().equals(value)){
+                            Map campi = (Map) entry.getValue();
+                            if(!campi.get(param).equals(value)){
                                 keyToRemove.add(k);
                             }
                         }
                         for (String k : keyToRemove) {
-                            ((ObjectNode) tabellaResult).remove(k);
+                            tabellaResult.remove(k);
                         }
                     }
                     
-                    JsonNode result = PaneDB.getDB().get(tabellaResult, getSplit[1], getSplit[2]);
+                    Map result = PaneDB.getDB().get(tabellaResult, getSplit[1], getSplit[2]);
                     return result.toString();
 
                 case "insert":
@@ -69,13 +85,13 @@ public class DBParser {
                         return "409";
                     }
                     try {
-                        JsonNode jsonToInsert = mapper.readTree(commandSplit[3]);
+                        Map jsonToInsert = jsonb.fromJson(commandSplit[3], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
                         if(PaneDB.getDB().insert(commandSplit[1], commandSplit[2], jsonToInsert) == true){
                             return "200";
                         } else {
                             return "400";
                         }
-                    } catch (JsonProcessingException e) {
+                    }catch (JsonbException | IllegalArgumentException e) {
                         return "400";
                     }
 
@@ -93,13 +109,13 @@ public class DBParser {
                         return "404";
                     }
                     try {
-                        JsonNode jsonToUpdate = mapper.readTree(commandSplit[3]);
+                        Map jsonToUpdate = jsonb.fromJson(commandSplit[3], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
                         if(PaneDB.getDB().update(commandSplit[1], commandSplit[2], jsonToUpdate) == true){
                             return "200";
                         } else {
                             return "400";
                         }
-                    } catch (JsonProcessingException e) {
+                    } catch (JsonbException | IllegalArgumentException e) {
                         return "400";
                     }
                 case "getLastIndex":

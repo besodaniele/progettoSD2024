@@ -7,10 +7,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 
 import it.unimib.sd2024.DBEngine.DBParser;
 import it.unimib.sd2024.DBEngine.PaneDB; 
@@ -25,7 +27,7 @@ public class Main {
     public static final int PORT = 3030;
 
     // Objectmapper
-    public static final ObjectMapper mapper = new ObjectMapper();
+    public static final Jsonb jsonb = JsonbBuilder.create();
 
     /**
      * Avvia il database e l'ascolto di nuove connessioni.
@@ -61,6 +63,7 @@ public class Main {
             try {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                
                 while (!commando.equals("close")) {
                     commando = in.readLine();
                     
@@ -69,6 +72,8 @@ public class Main {
                         out.println(risposta);
                     }
                 }
+                
+
                 in.close();
                 out.close();
                 client.close();
@@ -79,24 +84,24 @@ public class Main {
     }
 
     // @TODO: implementare i metodi di setup
-    private static void setupUtenti(JsonNode utenti) {
+    private static void setupUtenti(Map utenti) {
         PaneDB.getDB().createTable("utenti", utenti);
     }
 
-    private static void setupDomini(JsonNode domini) {
+    private static void setupDomini(Map domini) {
         PaneDB.getDB().createTable("domini", domini);
     }
 
-    private static void setupAcquisti(JsonNode acquisti) {
+    private static void setupAcquisti(Map acquisti) {
         PaneDB.getDB().createTable("acquisti", acquisti);
     }
 
-    public static ObjectNode fetchJsonFromFile(String pathToFile) throws IOException {
-        File file = new File(pathToFile); //si prende il file dal path
-        JsonNode rootNode = mapper.readTree(file); //leggo il file JSON e lo trasformo in un JsonNode
-
-        if (rootNode.isObject()) {
-            return (ObjectNode) rootNode;
+    public static Map fetchJsonFromFile(String pathToFile) throws IOException {
+        File file = new File(pathToFile);
+        String content = new String(Files.readAllBytes(file.toPath()));
+        Map rootMap = jsonb.fromJson(content, new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
+        if (rootMap != null) {
+            return rootMap;
         } else {
             throw new IOException("Il file JSON non contiene un oggetto JSON.");
         }
@@ -104,9 +109,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // caricamento file di configurazione
-        JsonNode acquisti = fetchJsonFromFile("./configurationFile/acquisti.json");
-        JsonNode domini = fetchJsonFromFile("./configurationFile/domini.json");
-        JsonNode utenti = fetchJsonFromFile("./configurationFile/utenti.json");
+        Map acquisti = fetchJsonFromFile("./configurationFile/acquisti.json");
+        Map domini = fetchJsonFromFile("./configurationFile/domini.json");
+        Map utenti = fetchJsonFromFile("./configurationFile/utenti.json");
 
         // setup dei dati
         setupUtenti(utenti);
