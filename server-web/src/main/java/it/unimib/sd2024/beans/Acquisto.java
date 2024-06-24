@@ -4,8 +4,16 @@ import java.time.LocalDate;
 
 public class Acquisto {
 
-    private String nome,cognome,mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo;
+    private String mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo,dominio;
     private LocalDate dataScadenza;
+    public String getDominio() {
+        return dominio;
+    }
+
+    public void setDominio(String dominio) {
+        this.dominio = dominio;
+    }
+
     private int cliente, id,numAnni;
     private double quota;
 
@@ -15,22 +23,6 @@ public class Acquisto {
 
     public void setNumAnni(int numAnni) {
         this.numAnni = numAnni;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCognome() {
-        return cognome;
-    }
-
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
     }
 
     public String getMail() {
