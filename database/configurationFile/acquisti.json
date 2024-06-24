@@ -1,2 +1,42 @@
 {
+    "0":{
+        "cvv": "123",
+        "nomeIntestatario": "Mario",
+        "cognomeIntestatario": "Rossi",
+        "numeroCarta": "4111111111111111",
+        "dataScadenza": "2025-12-12",
+        "quota": 10.0,
+        "numAnni": 1,
+        "cliente":"0",
+        "id": "0",
+        "tipo":"acquisto",
+        "dominio":"unimib.it"
+    },
+    "1":{
+        "cvv": "123",
+        "nomeIntestatario": "Luca",
+        "cognomeIntestatario": "Bianchi",
+        "numeroCarta": "4111111111111111",
+        "dataScadenza": "2025-12-12",
+        "quota": 10.0,
+        "numAnni": 4,
+        "cliente":"1",
+        "id": "1",
+        "tipo":"acquisto",
+        "dominio":"ciao.it"
+    },
+    "2":{
+        "cvv": "123",
+        "nomeIntestatario": "Giovanni",
+        "cognomeIntestatario": "Verdi",
+        "numeroCarta": "4111111111111111",
+        "dataScadenza": "2025-12-12",
+        "quota": 10.0,
+        "numAnni": 3,
+        "cliente":"1",
+        "id": "2",
+        "tipo":"acquisto",
+        "dominio":"peppe.it"
+    }
+
 }
