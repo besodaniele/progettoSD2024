@@ -5,15 +5,15 @@ import java.time.LocalDate;
 public class Dominio {
     private String dominio;
     private LocalDate dataRegistrazione, dataScadenza;
-    private int proprietario;
+    private String proprietario;
     private int id ;
     
 
-    public int getProprietario() {
+    public String getProprietario() {
         return proprietario;
     }
 
-    public void setProprietario(int proprietario) {
+    public void setProprietario(String proprietario) {
         this.proprietario = proprietario;
     }
 

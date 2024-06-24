@@ -69,23 +69,27 @@ public class DominioResource {
 
             conn.send(query);
             String response = conn.receive();
+            System.out.println(response);
 
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
             }
-            int proprietario = -1;
+            String proprietario = null;
 
             var domini = JsonbBuilder.create().fromJson(response, Map.class);
 
             for (var k : domini.keySet()) {
                 var d = (Map) domini.get(k);
+
                 LocalDate dataScadenza = LocalDate.parse((String) d.get("dataScadenza"));
+        
+                
                 if (dataScadenza.isAfter(LocalDate.now())) {
                     finalResponse = finalResponse + JsonbBuilder.create().toJson(d);
-                    proprietario = Integer.parseInt("" + d.get("proprietario"));
+                    proprietario ="" + d.get("proprietario");
                 }
             }
-            if (proprietario == -1) {
+            if (proprietario == null) {
                 return Response.status(Status.NOT_FOUND).build();
             }
 
@@ -114,7 +118,7 @@ public class DominioResource {
 
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
-            @PathParam("dominio") String dominio, @QueryParam("id") int id) {
+            @PathParam("dominio") String dominio, @QueryParam("id") String id) {
 
         Connection conn;
         String query = "get domini.*.* where dominio=" + dominio;
@@ -144,6 +148,7 @@ public class DominioResource {
             d.setProprietario(id);
             d.setDataRegistrazione(LocalDate.now());
             d.setDataScadenza(d.getDataRegistrazione().plusYears(acquisto.getNumAnni()));
+            System.out.println(JsonbBuilder.create().toJson(d));
             conn.send("insert domini " + lastId + " " + JsonbBuilder.create().toJson(d));
             response = conn.receive();
             if (response.equals("409")) {
@@ -162,6 +167,7 @@ public class DominioResource {
             acquisto.setTipo("rinnovo");
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
+
             if (response.equals("409")) {
                 System.out.println("Acquisto già registrato");
                 return Response.status(Status.CONFLICT).build();
@@ -169,6 +175,9 @@ public class DominioResource {
                 System.out.println("Acquisto non valido");
                 return Response.status(Status.BAD_REQUEST).build();
             }
+
+
+
             conn.close();
 
             return Response.created(new URI("http://localhost:8080/dominio/" + dominio)).build();
@@ -193,7 +202,7 @@ public class DominioResource {
     @Consumes(MediaType.APPLICATION_JSON)
 
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDominio(@QueryParam ("id") int id, @PathParam("dominio") String dominio,
+    public Response updateDominio(@QueryParam ("id") String id, @PathParam("dominio") String dominio,
             Acquisto acquisto) {
         Connection conn;
         System.out.println();
@@ -212,9 +221,9 @@ public class DominioResource {
                 var d = (Map) domini.get(k);
                 LocalDate dataScadenza = LocalDate.parse((String) d.get("dataScadenza"));
 
-                int idDom = Integer.parseInt(d.get("proprietario").toString());
+                String idDom = d.get("proprietario").toString();
 
-                if (id == idDom
+                if (id.equals(idDom)
                         && dataScadenza.isAfter(LocalDate.now())) {
                     dominioObject = d;
                 }
@@ -234,7 +243,7 @@ public class DominioResource {
             Dominio d = new Dominio();
             d.setDominio(dominioObject.get("dominio").toString());
             d.setId(Integer.parseInt(dominioObject.get("id").toString()));
-            d.setProprietario(Integer.parseInt(dominioObject.get("proprietario").toString()));
+            d.setProprietario(dominioObject.get("proprietario").toString());
             d.setDataRegistrazione(LocalDate.parse(dominioObject.get("dataRegistrazione").toString()));
             d.setDataScadenza(
                     LocalDate.parse(dominioObject.get("dataScadenza").toString()).plusYears(acquisto.getNumAnni()));

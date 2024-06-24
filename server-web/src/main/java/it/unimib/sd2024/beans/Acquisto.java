@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 public class Acquisto {
 
-    private String mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo,dominio;
+    private String cliente,mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo,dominio;
     private LocalDate dataScadenza;
-    private int cliente, id,numAnni;
+    private int  id,numAnni;
     private double quota;
     public String getDominio() {
         return dominio;
@@ -32,11 +32,11 @@ public class Acquisto {
         this.mail = mail;
     }
 
-    public int getCliente() {
+    public String getCliente() {
         return cliente;
     }
 
-    public void setCliente(int cliente) {
+    public void setCliente(String cliente) {
         this.cliente = cliente;
     }
 
