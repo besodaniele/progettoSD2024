@@ -164,6 +164,8 @@ public class DominioResource {
             conn.send("getLastIndex acquisti");
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
             acquisto.setId(lastIdAcquisto);
+            acquisto.setDominio(dominio);
+            acquisto.setTipo("rinnovo");
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
             if (response.equals("409")) {
@@ -264,6 +266,8 @@ public class DominioResource {
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
             acquisto.setCliente(u.getId());
             acquisto.setId(lastIdAcquisto);
+            acquisto.setDominio(dominio);
+            acquisto.setTipo("rinnovo");
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
             if (response.equals("409")) {

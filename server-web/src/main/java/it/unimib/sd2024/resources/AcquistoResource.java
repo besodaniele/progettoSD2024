@@ -1,5 +1,6 @@
 package it.unimib.sd2024.resources;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -7,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import it.unimib.sd2024.Connection;
 import it.unimib.sd2024.beans.Acquisto;
 import it.unimib.sd2024.beans.Utente;
 import jakarta.json.JsonException;
@@ -29,43 +32,29 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("acquisto")
 public class AcquistoResource {
-    private static Map<String, Acquisto> acquisti = new HashMap<String, Acquisto>();
-    static {
-        Acquisto a1 = new Acquisto();
-        a1.setNumeroCarta("1234567890123456");
-        a1.setCvv("123");
-        a1.setNomeIntestatario("Mario");
-        a1.setCognomeIntestatario("Rossi");
-        a1.setDataScadenza(LocalDate.now());
-        a1.setQuota(100.0);
-
-        a1.setCliente(0);
-        acquisti.put("m.rossi@gmail.com", a1);
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context HttpServletRequest request) {
-        Utente u =(Utente) request.getSession().getAttribute("utente");
+        Utente u = (Utente) request.getSession().getAttribute("utente");
 
         if (u == null) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
-        List <Acquisto> currentAcquisti= new ArrayList<Acquisto>();
-        if (acquisti != null)
-        {
-            for (Acquisto a : acquisti.values())
-            {
-                if (a.getCliente()==(u.getId()))
-                {
-                    currentAcquisti.add(a);
-                }
-            }
-            return Response.ok(currentAcquisti).build();
-        }
-        else
-            return Response.status(Status.NOT_FOUND).build();
-    }
+        Connection conn;
+        try {
+            conn = new Connection();
+            conn.send("get acquisti.*.* where cliente=" + u.getId());
+            String response = conn.receive();
+            conn.close();
 
+            if (response.equals("400")) {
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            return Response.ok(response).build();
+        } catch (IOException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
 
 }
