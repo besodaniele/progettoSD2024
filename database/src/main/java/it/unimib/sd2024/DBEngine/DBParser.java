@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -49,7 +48,7 @@ public class DBParser {
                     chiavi = tabella.entrySet().iterator();
                     while (chiavi.hasNext()) {
                         Map.Entry<String, Object> entry = chiavi.next();
-                        coppia.put(entry.getKey(), entry.getValue());
+                        tabellaResult.put(entry.getKey(), entry.getValue());
                     }
 
                     // se c'è una condizione where
@@ -65,7 +64,7 @@ public class DBParser {
                         ArrayList<String> keyToRemove = new ArrayList<>();
                         Iterator<Map.Entry<String, Object>> keys = tabellaDiKey.entrySet().iterator();
                         while(keys.hasNext()){
-                            Entry<String, Object> entry = keys.next();
+                            Map.Entry<String, Object> entry = keys.next();
                             String k = entry.getKey();
                             Map campi = (Map) entry.getValue();
                             if(!campi.get(param).equals(value)){
