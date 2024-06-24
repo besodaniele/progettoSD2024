@@ -1,14 +1,20 @@
 {
     "0": {
-        "dataRegistrazione": "2024-06-16",
-        "dataScadenza": "2024-06-16",
+        "dataRegistrazione": "2022-06-16",
+        "dataScadenza": "2023-06-16",
         "dominio": "unimib.it",
-        "proprietario": 0
+        "proprietario": "0"
     },
     "1": {
         "dataRegistrazione": "2024-06-16",
         "dataScadenza": "2024-06-16",
         "dominio": "ciao.it",
-        "proprietario": 1
+        "proprietario": "1"
+    },
+    "2": {
+        "dataRegistrazione": "2042-06-16",
+        "dataScadenza": "2025-06-16",
+        "dominio": "unimib.it",
+        "proprietario": "1"
     }
 }

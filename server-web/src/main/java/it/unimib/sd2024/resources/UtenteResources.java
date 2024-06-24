@@ -93,7 +93,6 @@ public class UtenteResources {
             }
             conn.close();
 
-            // attendere correzione get oggetto singolo
             Utente u = JsonbBuilder.create().fromJson(response, Utente.class);
             
             if (u != null) {
