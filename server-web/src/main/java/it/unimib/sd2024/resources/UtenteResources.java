@@ -55,11 +55,11 @@ public class UtenteResources {
         try {
             Connection conn = new Connection();
             conn.send("getLastIndex utenti");
-            int lastID=(Integer.parseInt(conn.receive()));
+            int lastID = (Integer.parseInt(conn.receive()));
             lastID++;
             utente.setId(lastID);
-            System.out.println("insert utenti " + lastID+" "+ JsonbBuilder.create().toJson(utente));
-            conn.send("insert utenti " + lastID+" "+ JsonbBuilder.create().toJson(utente));
+            System.out.println("insert utenti " + lastID + " " + JsonbBuilder.create().toJson(utente));
+            conn.send("insert utenti " + lastID + " " + JsonbBuilder.create().toJson(utente));
             String response = conn.receive();
             conn.close();
             if (response.equals("400")) {
@@ -82,7 +82,7 @@ public class UtenteResources {
     @Path("/login/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@PathParam("id") int id, @Context HttpServletRequest request) {
+    public Response login(@PathParam("id") int id) {
 
         try {
             Connection conn = new Connection();
@@ -97,34 +97,21 @@ public class UtenteResources {
             }
             conn.close();
 
+            System.out.println(response);
+
             Utente u = JsonbBuilder.create().fromJson(response, Utente.class);
-            
-            if (u != null) {
-                var sessione = request.getSession();
-                sessione.setAttribute("utente", u);
-                return Response.ok(u).build();
-            } else {
-                return Response.status(Status.NOT_FOUND).build();
-            }
+
+            return Response.ok(u).build();
+
         } catch (JsonbException e) {
+            e.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         } catch (IOException e) {
+            e.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // test per visionare l'utente loggato
-    @Path("testLogin")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response testLogin(@Context HttpServletRequest request) {
-        HttpSession sessione = request.getSession();
-        Utente u = (Utente) sessione.getAttribute("utente");
-        if (u != null) {
-            return Response.ok(u).build();
-        } else {
-            return Response.status(Status.UNAUTHORIZED).build();
-        }
-    }
+
 
 }

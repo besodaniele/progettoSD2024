@@ -25,6 +25,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -34,16 +35,12 @@ import jakarta.ws.rs.core.Response.Status;
 public class AcquistoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@Context HttpServletRequest request) {
-        Utente u = (Utente) request.getSession().getAttribute("utente");
+    public Response getAll(@QueryParam ("id") int id) {
 
-        if (u == null) {
-            return Response.status(Status.UNAUTHORIZED).build();
-        }
         Connection conn;
         try {
             conn = new Connection();
-            conn.send("get acquisti.*.* where cliente=" + u.getId());
+            conn.send("get acquisti.*.* where cliente=" + id);
             String response = conn.receive();
             conn.close();
 
