@@ -52,11 +52,9 @@ public class DominioResource {
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
             }
-            return Response.ok(response).build();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }
+            return Response.ok(currentDomains).build();
+        } else
+            return Response.ok().build();
     }
 
     // ricerca di un dominio

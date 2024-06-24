@@ -30,21 +30,32 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("utente")
 public class UtenteResources {
+    private static Map<Integer, Utente> utenti = new HashMap<Integer, Utente>();
+    private static int lastId = 0;
+    static {
+        Utente u1 = new Utente();
+        u1.setNome("Mario");
+        u1.setCognome("Rossi");
+        u1.setEmail("m.rossi@gmail.com");
+        u1.setId(lastId++);
+        utenti.put(u1.getId(), u1);
+        Utente u2 = new Utente();
+        u2.setNome("Luigi");
+        u2.setCognome("Verdi");
+        u2.setEmail("l.verdi@gmail.com");
+        u2.setId(lastId++);
+        utenti.put(u2.getId(), u2);
+    }
+
     // per testare se viene aggiunto l'utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        try {
-            Connection conn = new Connection();
-            conn.send("get utenti.*.*");
-            String response = conn.receive();
+        if (utenti != null)
+            return Response.ok(utenti).build();
+        else
+            return Response.ok().build();
 
-            conn.close();
-            return Response.ok(response).build();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }
     }
 
     @POST
@@ -54,25 +65,19 @@ public class UtenteResources {
         if (utente.getCognome() == null || utente.getNome() == null || utente.getEmail() == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }
-        try {
-            Connection conn = new Connection();
-            conn.send("getLastIndex utenti");
-            int id = Integer.parseInt(conn.receive()) + 1;
-            utente.setId(id);
-            conn.send("insert utenti " + id + " " + JsonbBuilder.create().toJson(utente));
-            String response = conn.receive();
-            if (response.equals("409")) {
+        for (Utente u : utenti.values()) {
+            if (u.getEmail().equals(utente.getEmail())) {
                 return Response.status(Status.CONFLICT).build();
-            } else if (response.equals("400")) {
-                return Response.status(Status.BAD_REQUEST).build();
             }
-            conn.close();
+        }
+        utente.setId(lastId++);
+        utenti.put(utente.getId(), utente);
+        try {
             return Response.created(new URI("http://localhost:8080/utente/" + utente.getId())).build();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (URISyntaxException e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
+
     }
 
     @Path("/login/{id}")
