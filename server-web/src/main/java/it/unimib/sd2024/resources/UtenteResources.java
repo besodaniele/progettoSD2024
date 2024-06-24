@@ -54,8 +54,12 @@ public class UtenteResources {
     public Response registrazione(Utente utente) {
         try {
             Connection conn = new Connection();
-
-            conn.send("insert utenti." + utente.getId() + JsonbBuilder.create().toJson(utente));
+            conn.send("getLastIndex utenti");
+            int lastID=(Integer.parseInt(conn.receive()));
+            lastID++;
+            utente.setId(lastID);
+            System.out.println("insert utenti " + lastID+" "+ JsonbBuilder.create().toJson(utente));
+            conn.send("insert utenti " + lastID+" "+ JsonbBuilder.create().toJson(utente));
             String response = conn.receive();
             conn.close();
             if (response.equals("400")) {
