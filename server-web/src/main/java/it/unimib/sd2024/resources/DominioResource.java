@@ -74,6 +74,10 @@ public class DominioResource {
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
             }
+            if (response.equals("404")) {
+                // non esiste quel dominio, neanche scaduto
+                return Response.status(Status.NOT_FOUND).build();
+            }
             String proprietario = null;
 
             var domini = JsonbBuilder.create().fromJson(response, Map.class);
@@ -84,11 +88,13 @@ public class DominioResource {
                 LocalDate dataScadenza = LocalDate.parse((String) d.get("dataScadenza"));
 
                 if (dataScadenza.isAfter(LocalDate.now())) {
+                    // se il dominio non è scaduto mi salvo di chi è
                     finalResponse = finalResponse + JsonbBuilder.create().toJson(d);
                     proprietario = "" + d.get("proprietario");
                 }
             }
             if (proprietario == null) {
+                // dominio esiste ma è scaduto, quindi è disponibile
                 return Response.status(Status.NOT_FOUND).build();
             }
 
@@ -96,9 +102,12 @@ public class DominioResource {
             conn.send(query);
             response = conn.receive();
             conn.close();
-            if (response.equals("400")) {
-                return Response.status(Status.BAD_REQUEST).build();
+            if (response.equals("400") || response.equals("404")) {
+                // errore nel db o incosistenza, c'è un dominio ma il suo proprietario non
+                // esiste
+                return Response.status(Status.INTERNAL_SERVER_ERROR).build();
             }
+
             finalResponse = finalResponse + "," + response;
             return Response.ok(finalResponse).build();
 
@@ -116,7 +125,8 @@ public class DominioResource {
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
             @PathParam("dominio") String dominio, @QueryParam("id") String id) {
         if (acquisto.getNumAnni() < 1) {
-            return Response.status(Status.BAD_REQUEST).build();
+            // non si può registrare un dominio per meno di un anno
+            return Response.status(Status.FORBIDDEN).build();
         }
         Connection conn;
         String query = "get domini.*.* where dominio=" + dominio;
@@ -126,6 +136,7 @@ public class DominioResource {
             conn.send(query);
             String response = conn.receive();
             if (response.equals("400")) {
+                // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
             var domini = JsonbBuilder.create().fromJson(response, Map.class);
@@ -133,7 +144,7 @@ public class DominioResource {
                 var d = (Map) domini.get(k);
                 LocalDate dataScadenza = LocalDate.parse((String) d.get("dataScadenza"));
                 if (dataScadenza.isAfter(LocalDate.now())) {
-                    System.out.println("Dominio già registrato e non scaduto");
+                    // dominio già registrato e non scaduto
                     return Response.status(Status.CONFLICT).build();
                 }
             }
@@ -150,10 +161,10 @@ public class DominioResource {
             conn.send("insert domini " + lastId + " " + JsonbBuilder.create().toJson(d));
             response = conn.receive();
             if (response.equals("409")) {
-                System.out.println("Dominio già registrato");
+                // dominio già registrato
                 return Response.status(Status.CONFLICT).build();
             } else if (response.equals("400")) {
-                System.out.println("Dominio non valido");
+                // dominio non valido
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
@@ -163,33 +174,28 @@ public class DominioResource {
             acquisto.setId("" + lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
-            acquisto.setQuota(acquisto.getNumAnni() * 10);
+            acquisto.setQuota(acquisto.getNumAnni() * 10); // applico tariffa fissa di 10 euro all'anno per l'acquisto
+                                                           // di un dominio
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
             if (response.equals("409")) {
-                System.out.println("Acquisto già registrato");
+                // acquisto già registrato, non dovrebbe mai succedere
                 return Response.status(Status.CONFLICT).build();
             } else if (response.equals("400")) {
-                System.out.println("Acquisto non valido");
+                // formato acquisto non valido
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
             conn.close();
 
             return Response.created(new URI("http://localhost:8080/dominio/" + dominio)).build();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException e) {
+
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
 
     }
-    // rinnovo di un dominio
 
     @Path("/{dominio}")
     @PUT
@@ -198,9 +204,9 @@ public class DominioResource {
     public Response updateDominio(@QueryParam("id") String id, @PathParam("dominio") String dominio,
             Acquisto acquisto) {
         Connection conn;
-        System.out.println();
         if (acquisto.getNumAnni() < 1) {
-            return Response.status(Status.BAD_REQUEST).build();
+            // non si può rinnovare un dominio per meno di un anno
+            return Response.status(Status.FORBIDDEN).build();
         }
         String query = "get domini.*.* where dominio=" + dominio;
         try {
@@ -208,6 +214,7 @@ public class DominioResource {
             conn.send(query);
             String response = conn.receive();
             if (response.equals("400")) {
+                // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
             var domini = JsonbBuilder.create().fromJson(response, Map.class);
@@ -221,19 +228,20 @@ public class DominioResource {
 
                 if (id.equals(idDom)
                         && dataScadenza.isAfter(LocalDate.now())) {
+                    // dominio trovato, non è ancora scaduto e appartiene all'utente
                     dominioObject = d;
                 }
 
             }
             if (dominioObject == null) {
-                System.out.println("Dominio non trovato");
+                // dominio non trovato
                 return Response.status(Status.NOT_FOUND).build();
             }
             LocalDate dataScadenza = LocalDate.parse((String) dominioObject.get("dataScadenza"));
             int anniMancanti = dataScadenza.getYear() - LocalDate.now().getYear();
             if (anniMancanti + acquisto.getNumAnni() > 10) {
-                System.out.println("Rinnovo non valido");
-                return Response.status(Status.UNAUTHORIZED).build();
+                // non si può rinnovare un dominio per più di 10 anni totali
+                return Response.status(Status.FORBIDDEN).build();
             }
 
             Dominio d = new Dominio();
@@ -247,10 +255,10 @@ public class DominioResource {
 
             response = conn.receive();
             if (response.equals("409")) {
-                System.out.println("Dominio già registrato");
+                // dominio già registrato
                 return Response.status(Status.CONFLICT).build();
             } else if (response.equals("400")) {
-                System.out.println("Dominio non valido");
+                // dominio non valido
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
@@ -265,10 +273,10 @@ public class DominioResource {
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
             if (response.equals("409")) {
-                System.out.println("Acquisto già registrato");
+                // acquisto già registrato, non dovrebbe mai succedere
                 return Response.status(Status.CONFLICT).build();
             } else if (response.equals("400")) {
-                System.out.println("Acquisto non valido");
+                // formato acquisto non valido
                 return Response.status(Status.BAD_REQUEST).build();
             }
             conn.close();
@@ -281,21 +289,5 @@ public class DominioResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
 
-    }
-
-    @GET
-    @Path("/testDB")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response testDB() {
-        try {
-            Connection conn = new Connection();
-            conn.send("get domini.*.*");
-            String response = conn.receive();
-            conn.close();
-            return Response.ok(response).build();
-        } catch (IOException e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }
     }
 }
