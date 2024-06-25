@@ -143,6 +143,12 @@ public class PaneDB {
 
     public String getLastIndex(String tableName) {
         Map table = getTable(tableName);
+        if (table == null) {
+            return "400";
+        }
+        if (table.isEmpty()) {
+            return "0";
+        }
         Iterator<Map.Entry<String, Object>> keys = table.entrySet().iterator();
         ArrayList<Integer> keysList = new ArrayList<>();
         while(keys.hasNext()){
