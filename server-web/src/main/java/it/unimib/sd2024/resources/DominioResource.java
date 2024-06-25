@@ -110,11 +110,8 @@ public class DominioResource {
     }
 
     @Path("/{dominio}")
-
     @POST
-
     @Consumes(MediaType.APPLICATION_JSON)
-
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
             @PathParam("dominio") String dominio, @QueryParam("id") String id) {
@@ -164,6 +161,7 @@ public class DominioResource {
             acquisto.setId("" + lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
+            acquisto.setQuota(acquisto.getNumAnni() * 10);
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
@@ -189,15 +187,11 @@ public class DominioResource {
         }
 
     }
-
     // rinnovo di un dominio
 
     @Path("/{dominio}")
-
     @PUT
-
     @Consumes(MediaType.APPLICATION_JSON)
-
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateDominio(@QueryParam("id") String id, @PathParam("dominio") String dominio,
             Acquisto acquisto) {
@@ -261,6 +255,8 @@ public class DominioResource {
             acquisto.setId("" + lastIdAcquisto);
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
+            acquisto.setQuota(acquisto.getNumAnni() * 5);
+
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
             if (response.equals("409")) {
