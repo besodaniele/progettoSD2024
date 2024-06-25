@@ -115,7 +115,9 @@ public class DominioResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
             @PathParam("dominio") String dominio, @QueryParam("id") String id) {
-
+        if (acquisto.getNumAnni() < 1) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
         Connection conn;
         String query = "get domini.*.* where dominio=" + dominio;
 
@@ -197,6 +199,9 @@ public class DominioResource {
             Acquisto acquisto) {
         Connection conn;
         System.out.println();
+        if (acquisto.getNumAnni() < 1) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
         String query = "get domini.*.* where dominio=" + dominio;
         try {
             conn = new Connection();
