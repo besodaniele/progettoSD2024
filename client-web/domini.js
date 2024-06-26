@@ -2,42 +2,54 @@ const API_URI = "http://localhost:8080";
 
 window.onload = init();
 
-async function cercaDominio(event)
+async function cercaDominio(userId)
 {
-    event.preventDefault();
-
     const dominio = document.getElementById('dom').value;
-
-    ricercaDominio(dominio);
+    await ricercaDominio(dominio, userId);
 }
 
-async function ricercaDominio(dominio)
+async function ricercaDominio(dominio, userId)
 {
     try {
         const response = await fetch(API_URI + '/dominio/' + dominio, {
             method: 'GET'
         });
 
+        const ris = document.getElementById("acq");
+
+        const existingButton = ris.querySelector("button");
+        if (existingButton) {
+            ris.removeChild(existingButton);
+        }
+
+        const existingText = ris.querySelector("text");
+        if (existingText) {
+            ris.removeChild(existingText);
+        }
+
         if(response.status === 404)
-        {
+        {   
             console.log('Dominio libero');
-            document.getElementById('err').innerText = 'Il dominio è libero';
+            document.getElementById('risultato').innerText = 'Il dominio è libero';
 
             let acquista = document.createElement("button");
             acquista.type = "button";
-            bottone.innerText = "Acquista";
-            esci.addEventListener("click", () => {
-                window.location.href = "acquista.html?dominio=" + dominio + "&id=" + userId;
+            acquista.innerText = "Acquista";
+            acquista.addEventListener("click", () => {
+                window.location.href = "acquisto.html?dominio=" + dominio + "&id=" + userId + "&tipo=acquisto";
             });
+            ris.appendChild(acquista);
         }
         if(response.status === 200)
         {
             console.log('Dominio occupato');
-            document.getElementById('err').innerText = 'Il dominio è occupato';
+            document.getElementById('risultato').innerText = 'Il dominio è occupato';
 
-            data = await response.json();
-            let par = document.createElement("p");
-            par.innerText = data;
+            //let data = await response.json();
+            //console.log(data);
+            //let par = document.createElement("p");
+            //par.innerText = "Il dominio è occupato da " + response;
+            //ris.appendChild(par);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -64,7 +76,7 @@ async function getDomini(userId)
     }
 }
 
-async function addDomini(dominio)
+async function addDomini(dominio, userId)
 {
     let tab = document.getElementById("domini-utente");
     let riga = tab.insertRow();
@@ -80,7 +92,9 @@ async function addDomini(dominio)
         let bottone = document.createElement("button");
         bottone.type = "button";
         bottone.innerText = "Rinnova";
-        bottone.addEventListener("click", ricercaDominio(dominio.dominio));
+        bottone.addEventListener("click", () => {
+            window.location.href = "acquisto.html?dominio=" + dominio.dominio + "&id=" + userId + "&tipo=rinnovo";
+        });
         riga.insertCell().appendChild(bottone);
     }
 }
@@ -125,7 +139,7 @@ async function init()
     
     for(let d in domini)
     {
-        addDomini(domini[d]);
+        addDomini(domini[d], userId);
     } 
 
     let ordini = await getOrdini(userId);
@@ -135,10 +149,13 @@ async function init()
         addOrdini(ordini[o]);
     }
 
-    document.getElementById("cerca-domini").addEventListener("submit", cercaDominio);
+    //document.getElementById("cerca-domini").addEventListener("submit", cercaDominio(userId));
+    document.getElementById("cerca-domini").addEventListener("submit", (event) => {
+        event.preventDefault();
+        cercaDominio(userId);
+    });
 
-    let esci = document.getElementById("esci");
-    esci.addEventListener("click", () => {
+    document.getElementById("esci").addEventListener("click", () => {
         window.location.href = "index.html";
     });
 }

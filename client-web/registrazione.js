@@ -66,4 +66,8 @@ async function inviaDati(event)
 async function init()
 {
     document.getElementById("registrazione").addEventListener("submit", inviaDati);
+
+    document.getElementById("esci").addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
 }
