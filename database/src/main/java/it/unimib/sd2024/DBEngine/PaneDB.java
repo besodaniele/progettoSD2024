@@ -5,16 +5,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 
 // la classe è una singleton
 public class PaneDB {
     private final HashMap<String, Map<String, Object>> db;
+    private final ConcurrentHashMap<String, String> locks;
     private static PaneDB pane = null;
 
     private PaneDB() {
         this.db = new HashMap<>();
+        this.locks = new ConcurrentHashMap<>();
     }
 
     //Singleton
@@ -108,26 +111,42 @@ public class PaneDB {
         }
     }
 
-    public boolean insert(String tableName, String key, Map value) {
+    public String insert(String tableName, String key, Map value, String user) {
+        //controllo lock
+        String utente = locks.get(tableName + "." + key);
+        if (utente != null && !utente.equals(user)) {
+            return "409";
+        } else if (utente == null) {
+            return "400";
+        }
+
         Map table = getTable(tableName);
 
         if(value != null){
             table.put(key, value);
             db.put(tableName, table);
-            return true;
+            return "200";
         }
-        return false;
+        return "400";
     }
 
-    public boolean update(String tableName, String key, Map value) {
+    public String update(String tableName, String key, Map value, String user) {
+        //controllo lock
+        String utente = locks.get(tableName + "." + key);
+        if (utente != null && !utente.equals(user)) {
+            return "409";
+        } else if (utente == null) {
+            return "400";
+        }
+
         Map table = getTable(tableName);
 
         if(key != null){
             table.put(key, value);
             db.put(tableName, table);
-            return true;
+            return "200";
         }
-        return false;
+        return "400";
     }
 
     public boolean delete(String tableName, String key) {
@@ -163,5 +182,27 @@ public class PaneDB {
             }
         }
         return String.valueOf(lastKey);
+    }
+
+    public synchronized String lock(String tableName, String key, String user) {
+        String utente = locks.get(tableName + "." + key);
+        if (utente == null) {
+            locks.put(tableName + "." + key, user);
+            return "200";
+        } else {
+            return "409";
+        }
+    }
+
+    public synchronized String unlock(String tableName, String key, String user) {
+        String utente = locks.get(tableName + "." + key);
+        if(utente != null && utente.equals(user)){
+            locks.remove(tableName + "." + key);
+            return "200";
+        } else if(utente == null){
+            return "404";
+        } else {
+            return "400";
+        }
     }
 }

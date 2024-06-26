@@ -78,8 +78,11 @@ public class DBParser {
                     }
                     try {
                         Map jsonToInsert = jsonb.fromJson(commandSplit[3], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
-                        if(PaneDB.getDB().insert(commandSplit[1], commandSplit[2], jsonToInsert) == true){
+                        String code = PaneDB.getDB().insert(commandSplit[1], commandSplit[2], jsonToInsert, commandSplit[4]);
+                        if(code.equals("200")){
                             return "200";
+                        } else if(code.equals("409")){
+                            return "409";
                         } else {
                             return "400";
                         }
@@ -102,8 +105,11 @@ public class DBParser {
                     }
                     try {
                         Map jsonToUpdate = jsonb.fromJson(commandSplit[3], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
-                        if(PaneDB.getDB().update(commandSplit[1], commandSplit[2], jsonToUpdate) == true){
+                        String code = PaneDB.getDB().update(commandSplit[1], commandSplit[2], jsonToUpdate, commandSplit[4]);
+                        if(code.equals("200")){
                             return "200";
+                        } else if(code.equals("409")){
+                            return "409";
                         } else {
                             return "400";
                         }
@@ -112,6 +118,14 @@ public class DBParser {
                     }
                 case "getLastIndex":
                     return PaneDB.getDB().getLastIndex(commandSplit[1]);
+
+                case "lock":
+                    String lock = PaneDB.getDB().lock(commandSplit[1], commandSplit[2], commandSplit[3]);
+                    return lock;
+                
+                case "unlock":
+                    String unlock = PaneDB.getDB().unlock(commandSplit[1], commandSplit[2], commandSplit[3]);
+                    return unlock;
                 default:
                     return "400";
             }
