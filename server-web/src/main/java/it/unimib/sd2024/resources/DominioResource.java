@@ -38,19 +38,15 @@ import jakarta.ws.rs.core.Response.Status;
 public class DominioResource {
     @GET
     @Path("lock/{Dominio}")
-    public Response setLock(@PathParam("Dominio") String dominio,@QueryParam ("id") String id) {
+    public Response setLock(@PathParam("Dominio") String dominio, @QueryParam("id") String id) {
         Connection conn;
         String query = "";
         try {
             conn = new Connection();
-            query = "lock domini." + dominio+" "+id;
+            query = "lock domini " + dominio + " " + id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
-            if (response.equals("404")) {
-                // il dominio non esiste
-                return Response.status(Status.NOT_FOUND).build();
-            }
             if (response.equals("400")) {
                 // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
@@ -67,12 +63,12 @@ public class DominioResource {
 
     @GET
     @Path("unlock/{Dominio}")
-    public Response setUnlock(@PathParam("Dominio") String dominio,@QueryParam ("id") String id){
+    public Response setUnlock(@PathParam("Dominio") String dominio, @QueryParam("id") String id) {
         Connection conn;
         String query = "";
         try {
             conn = new Connection();
-            query = "unlock domini." + dominio+" "+id;
+            query = "unlock domini " + dominio + " " + id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
@@ -124,7 +120,6 @@ public class DominioResource {
 
             conn.send(query);
             String response = conn.receive();
-            System.out.println(response);
 
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
@@ -192,6 +187,7 @@ public class DominioResource {
             String response = conn.receive();
             if (response.equals("400")) {
                 // errore nel database
+
                 return Response.status(Status.BAD_REQUEST).build();
             }
             var domini = JsonbBuilder.create().fromJson(response, Map.class);
@@ -212,14 +208,15 @@ public class DominioResource {
             d.setProprietario(id);
             d.setDataRegistrazione(LocalDate.now());
             d.setDataScadenza(d.getDataRegistrazione().plusYears(acquisto.getNumAnni()));
-            System.out.println(JsonbBuilder.create().toJson(d));
-            conn.send("insert domini " + lastId + " " + JsonbBuilder.create().toJson(d));
+            conn.send("insert domini " + lastId + " " + d.getDominio() + " " + id + " "
+                    + JsonbBuilder.create().toJson(d));
             response = conn.receive();
             if (response.equals("409")) {
-                // dominio già registrato
+                // dominio già registrato o già lockato
                 return Response.status(Status.CONFLICT).build();
             } else if (response.equals("400")) {
                 // dominio non valido
+
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
@@ -231,10 +228,11 @@ public class DominioResource {
             acquisto.setTipo("rinnovo");
             acquisto.setQuota(acquisto.getNumAnni() * 10); // applico tariffa fissa di 10 euro all'anno per l'acquisto
                                                            // di un dominio
-            conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
+            conn.send("insert acquisti " + acquisto.getId() + " " + acquisto.getId() + " " + id + " "
+                    + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
-            query = "unlock domini." +dominio+" "+id;
+            query = "unlock domini " + dominio + " " + id;
             conn.send(query);
             response = conn.receive();
             conn.close();
@@ -244,6 +242,7 @@ public class DominioResource {
             }
             if (response.equals("400")) {
                 // errore nel database
+
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
@@ -312,7 +311,7 @@ public class DominioResource {
             d.setDataRegistrazione(LocalDate.parse(dominioObject.get("dataRegistrazione").toString()));
             d.setDataScadenza(
                     LocalDate.parse(dominioObject.get("dataScadenza").toString()).plusYears(acquisto.getNumAnni()));
-            conn.send("update domini " + d.getId() + " " + JsonbBuilder.create().toJson(d));
+            conn.send("update domini " + d.getId() + " " + d.getDominio() + " " + id + " " + JsonbBuilder.create().toJson(d));
 
             response = conn.receive();
             if (response.equals("409")) {
@@ -331,7 +330,7 @@ public class DominioResource {
             acquisto.setTipo("rinnovo");
             acquisto.setQuota(acquisto.getNumAnni() * 5);
 
-            conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
+            conn.send("insert acquisti " + acquisto.getId() + " "+ acquisto.getId() +" " + id + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
             if (response.equals("409")) {
                 // acquisto già registrato, non dovrebbe mai succedere
@@ -341,7 +340,7 @@ public class DominioResource {
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
-            query = "unlock domini." +dominio+" "+id;
+            query = "unlock domini " + dominio + " " + id;
             conn.send(query);
             response = conn.receive();
             conn.close();
