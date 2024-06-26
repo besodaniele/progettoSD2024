@@ -106,7 +106,7 @@ public class DominioResource {
         }
     }
 
-    // ricerca di un dominio
+    // disponibilità di un dominio
     @Path("/{dominio}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -158,7 +158,7 @@ public class DominioResource {
                 return Response.status(Status.INTERNAL_SERVER_ERROR).build();
             }
 
-            finalResponse = finalResponse + "," + response;
+            finalResponse = "{"+finalResponse + "," + response+"}";
             return Response.ok(finalResponse).build();
 
         } catch (IOException e) {
@@ -167,7 +167,7 @@ public class DominioResource {
         }
 
     }
-
+    //aggiunge un dominio
     @Path("/{dominio}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -256,7 +256,7 @@ public class DominioResource {
         }
 
     }
-
+    // rinnovo di un dominio
     @Path("/{dominio}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)

@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-
 import it.unimib.sd2024.Connection;
 import it.unimib.sd2024.beans.Utente;
 import jakarta.json.JsonException;
