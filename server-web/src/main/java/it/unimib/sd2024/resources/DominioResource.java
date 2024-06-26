@@ -28,6 +28,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.client.ResponseProcessingException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -35,7 +36,61 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("dominio")
 public class DominioResource {
+    @GET
+    @Path("lock/{Dominio}")
+    public Response setLock(@PathParam("Dominio") String dominio,@QueryParam ("id") String id) {
+        Connection conn;
+        String query = "";
+        try {
+            conn = new Connection();
+            query = "lock domini." + dominio+" "+id;
+            conn.send(query);
+            String response = conn.receive();
+            conn.close();
+            if (response.equals("404")) {
+                // il dominio non esiste
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            if (response.equals("400")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            if (response.equals("409")) {
+                // dominio già bloccato
+                return Response.status(Status.CONFLICT).build();
+            }
+            return Response.ok().build();
+        } catch (IOException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
+    @GET
+    @Path("unlock/{Dominio}")
+    public Response setUnlock(@PathParam("Dominio") String dominio,@QueryParam ("id") String id){
+        Connection conn;
+        String query = "";
+        try {
+            conn = new Connection();
+            query = "unlock domini." + dominio+" "+id;
+            conn.send(query);
+            String response = conn.receive();
+            conn.close();
+            if (response.equals("404")) {
+                // il dominio non esiste
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            if (response.equals("400")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            return Response.ok().build();
+        } catch (IOException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // restituisce tutti i domini di un utente
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("id") int id) {
@@ -124,7 +179,7 @@ public class DominioResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
             @PathParam("dominio") String dominio, @QueryParam("id") String id) {
-        if (acquisto.getNumAnni() < 1|| acquisto.getNumAnni() > 10) {
+        if (acquisto.getNumAnni() < 1 || acquisto.getNumAnni() > 10) {
             // non si può registrare un dominio per meno di un anno
             return Response.status(Status.FORBIDDEN).build();
         }
@@ -179,17 +234,23 @@ public class DominioResource {
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
-            if (response.equals("409")) {
-                // acquisto già registrato, non dovrebbe mai succedere
-                return Response.status(Status.CONFLICT).build();
-            } else if (response.equals("400")) {
-                // formato acquisto non valido
+            query = "unlock domini." +dominio+" "+id;
+            conn.send(query);
+            response = conn.receive();
+            conn.close();
+            if (response.equals("404")) {
+                // il dominio non esiste
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            if (response.equals("400")) {
+                // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
             conn.close();
 
             return Response.created(new URI("http://localhost:8080/dominio/" + dominio)).build();
+
         } catch (IOException | URISyntaxException e) {
 
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -279,6 +340,20 @@ public class DominioResource {
                 // formato acquisto non valido
                 return Response.status(Status.BAD_REQUEST).build();
             }
+
+            query = "unlock domini." +dominio+" "+id;
+            conn.send(query);
+            response = conn.receive();
+            conn.close();
+            if (response.equals("404")) {
+                // il dominio non esiste
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            if (response.equals("400")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+
             conn.close();
 
             return Response.created(new URI("http://localhost:8080/dominio/" + dominio)).build();
