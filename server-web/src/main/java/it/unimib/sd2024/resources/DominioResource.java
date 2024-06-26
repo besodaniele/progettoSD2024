@@ -43,7 +43,7 @@ public class DominioResource {
         String query = "";
         try {
             conn = new Connection();
-            query = "lock domini." + dominio+"."+id;
+            query = "lock domini." + dominio+" "+id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
@@ -72,7 +72,7 @@ public class DominioResource {
         String query = "";
         try {
             conn = new Connection();
-            query = "unlock domini." + dominio+"."+id;
+            query = "unlock domini." + dominio+" "+id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
@@ -234,7 +234,7 @@ public class DominioResource {
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
-            query = "unlock domini." + dominio+"."+id;
+            query = "unlock domini." +dominio+" "+id;
             conn.send(query);
             response = conn.receive();
             conn.close();
@@ -341,7 +341,7 @@ public class DominioResource {
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
-            query = "unlock domini." + dominio+"."+id;
+            query = "unlock domini." +dominio+" "+id;
             conn.send(query);
             response = conn.receive();
             conn.close();
