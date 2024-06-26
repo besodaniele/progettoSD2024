@@ -111,7 +111,7 @@ public class PaneDB {
         }
     }
 
-    public String insert(String tableName, String key, Map value, String user) {
+    public String insert(String tableName, String key, String user, Map value) {
         //controllo lock
         String utente = locks.get(tableName + "." + key);
         if (utente != null && !utente.equals(user)) {
@@ -130,7 +130,7 @@ public class PaneDB {
         return "400";
     }
 
-    public String update(String tableName, String key, Map value, String user) {
+    public String update(String tableName, String key, String user, Map value) {
         //controllo lock
         String utente = locks.get(tableName + "." + key);
         if (utente != null && !utente.equals(user)) {

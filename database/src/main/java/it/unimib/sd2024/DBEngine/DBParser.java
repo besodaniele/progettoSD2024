@@ -77,8 +77,8 @@ public class DBParser {
                         return "409";
                     }
                     try {
-                        Map jsonToInsert = jsonb.fromJson(commandSplit[3], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
-                        String code = PaneDB.getDB().insert(commandSplit[1], commandSplit[2], jsonToInsert, commandSplit[4]);
+                        Map jsonToInsert = jsonb.fromJson(commandSplit[4], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
+                        String code = PaneDB.getDB().insert(commandSplit[1], commandSplit[2], commandSplit[3], jsonToInsert);
                         if(code.equals("200")){
                             return "200";
                         } else if(code.equals("409")){
@@ -104,8 +104,8 @@ public class DBParser {
                         return "404";
                     }
                     try {
-                        Map jsonToUpdate = jsonb.fromJson(commandSplit[3], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
-                        String code = PaneDB.getDB().update(commandSplit[1], commandSplit[2], jsonToUpdate, commandSplit[4]);
+                        Map jsonToUpdate = jsonb.fromJson(commandSplit[4], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
+                        String code = PaneDB.getDB().update(commandSplit[1], commandSplit[2], commandSplit[3], jsonToUpdate);
                         if(code.equals("200")){
                             return "200";
                         } else if(code.equals("409")){
