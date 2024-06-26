@@ -38,12 +38,12 @@ import jakarta.ws.rs.core.Response.Status;
 public class DominioResource {
     @GET
     @Path("lock/{Dominio}")
-    public Response setLock(@PathParam("Dominio") String dominio) {
+    public Response setLock(@PathParam("Dominio") String dominio,@QueryParam ("id") String id) {
         Connection conn;
         String query = "";
         try {
             conn = new Connection();
-            query = "lock domini." + dominio;
+            query = "lock domini." + dominio+"."+id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
@@ -67,12 +67,12 @@ public class DominioResource {
 
     @GET
     @Path("unlock/{Dominio}")
-    public Response setUnlock(@PathParam("Dominio") String dominio) {
+    public Response setUnlock(@PathParam("Dominio") String dominio,@QueryParam ("id") String id){
         Connection conn;
         String query = "";
         try {
             conn = new Connection();
-            query = "unlock domini." + dominio;
+            query = "unlock domini." + dominio+"."+id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
@@ -234,7 +234,7 @@ public class DominioResource {
             conn.send("insert acquisti " + acquisto.getId() + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
-            query = "unlock domini." + dominio;
+            query = "unlock domini." + dominio+"."+id;
             conn.send(query);
             response = conn.receive();
             conn.close();
@@ -341,7 +341,7 @@ public class DominioResource {
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
-            query = "unlock domini." + dominio;
+            query = "unlock domini." + dominio+"."+id;
             conn.send(query);
             response = conn.receive();
             conn.close();
