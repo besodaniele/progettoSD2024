@@ -124,7 +124,7 @@ public class DominioResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDominio(@Context HttpServletRequest request, Acquisto acquisto,
             @PathParam("dominio") String dominio, @QueryParam("id") String id) {
-        if (acquisto.getNumAnni() < 1) {
+        if (acquisto.getNumAnni() < 1|| acquisto.getNumAnni() > 10) {
             // non si può registrare un dominio per meno di un anno
             return Response.status(Status.FORBIDDEN).build();
         }
