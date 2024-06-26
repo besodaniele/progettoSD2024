@@ -57,10 +57,11 @@ public class UtenteResources {
             conn.send("getLastIndex utenti");
             int lastID = (Integer.parseInt(conn.receive()));
             lastID++;
-            conn.send("lock utenti "+lastID+" "+lastID);
+            conn.send("lock utenti " + lastID + " " + lastID);
             utente.setId(lastID);
 
-            conn.send("insert utenti " + lastID + " " + utente.getId() + " " + JsonbBuilder.create().toJson(utente));
+            conn.send("insert utenti " + lastID + " " + utente.getId() + " " + utente.getId() + " "
+                    + JsonbBuilder.create().toJson(utente));
             String response = conn.receive();
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
@@ -68,7 +69,7 @@ public class UtenteResources {
             if (response.equals("409")) {
                 return Response.status(Status.CONFLICT).build();
             }
-            conn.send("unlock utenti "+lastID+" "+lastID);
+            conn.send("unlock utenti " + lastID + " " + lastID);
             conn.close();
             return Response.created(new URI("/utente/" + utente.getId())).build();
         } catch (JsonbException e) {
@@ -105,10 +106,7 @@ public class UtenteResources {
 
             return Response.ok(u).build();
 
-        } catch (JsonbException e) {
-            e.printStackTrace();
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        } catch (IOException e) {
+        } catch (JsonbException | IOException e) {
             e.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
