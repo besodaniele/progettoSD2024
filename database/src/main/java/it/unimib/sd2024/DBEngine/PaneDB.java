@@ -111,9 +111,9 @@ public class PaneDB {
         }
     }
 
-    public String insert(String tableName, String key, String user, Map value) {
+    public String insert(String tableName, String key, String nameKey, String user, Map value) {
         //controllo lock
-        String utente = locks.get(tableName + "." + key);
+        String utente = locks.get(tableName + "." + nameKey);
         if (utente != null && !utente.equals(user)) {
             return "409";
         } else if (utente == null) {
@@ -130,9 +130,9 @@ public class PaneDB {
         return "400";
     }
 
-    public String update(String tableName, String key, String user, Map value) {
+    public String update(String tableName, String key,String nameKey, String user, Map value) {
         //controllo lock
-        String utente = locks.get(tableName + "." + key);
+        String utente = locks.get(tableName + "." + nameKey);
         if (utente != null && !utente.equals(user)) {
             return "409";
         } else if (utente == null) {
@@ -184,20 +184,20 @@ public class PaneDB {
         return String.valueOf(lastKey);
     }
 
-    public synchronized String lock(String tableName, String key, String user) {
-        String utente = locks.get(tableName + "." + key);
+    public synchronized String lock(String tableName, String nameKey, String user) {
+        String utente = locks.get(tableName + "." + nameKey);
         if (utente == null) {
-            locks.put(tableName + "." + key, user);
+            locks.put(tableName + "." + nameKey, user);
             return "200";
         } else {
             return "409";
         }
     }
 
-    public synchronized String unlock(String tableName, String key, String user) {
-        String utente = locks.get(tableName + "." + key);
+    public synchronized String unlock(String tableName, String nameKey, String user) {
+        String utente = locks.get(tableName + "." + nameKey);
         if(utente != null && utente.equals(user)){
-            locks.remove(tableName + "." + key);
+            locks.remove(tableName + "." + nameKey);
             return "200";
         } else if(utente == null){
             return "404";
