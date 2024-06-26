@@ -69,8 +69,6 @@ public class Main {
                     
                     if(!commando.equals("close")){
                         var risposta = DBParser.getParser().parse(commando);
-                        System.out.println(risposta);
-
                         out.println(risposta);
                     }
                 }

@@ -79,7 +79,7 @@ public class DBParser {
                     try {
                         Map jsonToInsert = jsonb.fromJson(commandSplit[5], new HashMap<String, Object>(){}.getClass().getGenericSuperclass());
                         String code = PaneDB.getDB().insert(commandSplit[1], commandSplit[2], commandSplit[3], commandSplit[4], jsonToInsert);
-                        System.out.println(code);
+
                         if(code.equals("200")){
                             return "200";
                         } else if(code.equals("409")){

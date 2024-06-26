@@ -119,7 +119,7 @@ public class PaneDB {
         } else if (utente == null) {
             return "400";
         }
-        System.out.println("sono dopo il controllo lock");
+
         Map table = getTable(tableName);
 
         if(value != null){
