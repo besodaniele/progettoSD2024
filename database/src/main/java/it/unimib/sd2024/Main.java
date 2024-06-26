@@ -64,6 +64,7 @@ public class Main {
                 var out = new PrintWriter(client.getOutputStream(), true);
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 
+                
                 while (!commando.equals("close")) {
                     commando = in.readLine();
                     
@@ -74,6 +75,8 @@ public class Main {
                 }
                 
 
+
+
                 in.close();
                 out.close();
                 client.close();
@@ -82,7 +85,7 @@ public class Main {
             }
         }
     }
-
+/*
     // @TODO: implementare i metodi di setup
     private static void setupUtenti(Map utenti) {
         PaneDB.getDB().createTable("utenti", utenti);
@@ -94,6 +97,10 @@ public class Main {
 
     private static void setupAcquisti(Map acquisti) {
         PaneDB.getDB().createTable("acquisti", acquisti);
+    }
+*/
+    private static void setupJson(String name, Map json) {
+        PaneDB.getDB().createTable(name, json);
     }
 
     public static Map fetchJsonFromFile(String pathToFile) throws IOException {
@@ -108,6 +115,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
+        /* 
         // caricamento file di configurazione
         Map acquisti = fetchJsonFromFile("./configurationFile/acquisti.json");
         Map domini = fetchJsonFromFile("./configurationFile/domini.json");
@@ -117,6 +125,16 @@ public class Main {
         setupUtenti(utenti);
         setupDomini(domini);
         setupAcquisti(acquisti);
+        */
+        if(args.length == 0){
+            System.out.println("Errore: inserire il nome dei file da caricare.");
+            System.exit(1);
+        } else {
+            for (String path : args) {
+                Map rootMap = fetchJsonFromFile("./configurationFile/"+ path + ".json");
+                setupJson(path, rootMap);
+            }
+        }
 
         // avvio del server
         startServer();
