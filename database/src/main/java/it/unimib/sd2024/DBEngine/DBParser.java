@@ -31,6 +31,9 @@ public class DBParser {
             Map<String, Object> tabella = PaneDB.getDB().getTable(commandSplit[1]);
             switch (commandSplit[0]) {
                 case "get":
+                    if((commandSplit.length < 2 || commandSplit.length > 2) || (commandSplit.length < 4 || commandSplit.length > 4)){
+                        return "400";
+                    }
                     // parse tabella.key.param
                     String[] getSplit = commandSplit[1].split("\\.");
                     // prendo la tabella dal database
@@ -73,6 +76,9 @@ public class DBParser {
                     return resultString;
 
                 case "insert":
+                    if(commandSplit.length < 6 || commandSplit.length > 6){
+                            return "400";
+                        }
                     if (PaneDB.getDB().get(tabella, commandSplit[2], "*") != null) {
                         return "409";
                     }
@@ -92,6 +98,9 @@ public class DBParser {
                     }
 
                 case "delete":
+                    if(commandSplit.length < 3 || commandSplit.length > 3){
+                        return "400";
+                    }
                     if (PaneDB.getDB().get(tabella, commandSplit[2], "*") == null) {
                         return "404";
                     } 
@@ -101,6 +110,9 @@ public class DBParser {
                         return "400";
                     }
                 case "update":
+                    if(commandSplit.length < 6 || commandSplit.length > 6){
+                        return "400";
+                    }
                     if (PaneDB.getDB().get(tabella, commandSplit[2], "*") == null) {
                         return "404";
                     }
@@ -118,13 +130,22 @@ public class DBParser {
                         return "400";
                     }
                 case "getLastIndex":
+                    if(commandSplit.length < 2 || commandSplit.length > 2){
+                        return "400";
+                    }
                     return PaneDB.getDB().getLastIndex(commandSplit[1]);
 
                 case "lock":
+                    if(commandSplit.length < 4 || commandSplit.length > 4){
+                        return "400";
+                    }
                     String lock = PaneDB.getDB().lock(commandSplit[1], commandSplit[2], commandSplit[3]);
                     return lock;
                 
                 case "unlock":
+                    if(commandSplit.length < 4 || commandSplit.length > 4){
+                        return "400";
+                    }
                     String unlock = PaneDB.getDB().unlock(commandSplit[1], commandSplit[2], commandSplit[3]);
                     return unlock;
                 default:
