@@ -22,7 +22,7 @@ async function ricercaDominio(dominio, userId)
             ris.removeChild(existingButton);
         }
 
-        const existingText = ris.querySelector("text");
+        const existingText = ris.querySelector("p");
         if (existingText) {
             ris.removeChild(existingText);
         }
@@ -43,13 +43,12 @@ async function ricercaDominio(dominio, userId)
         if(response.status === 200)
         {
             console.log('Dominio occupato');
-            document.getElementById('risultato').innerText = 'Il dominio è occupato';
+            document.getElementById('risultato').innerText = 'Il dominio è occupato da:';
 
-            //let data = await response.json();
-            //console.log(data);
-            //let par = document.createElement("p");
-            //par.innerText = "Il dominio è occupato da " + response;
-            //ris.appendChild(par);
+            let data = await response.json();
+            let par = document.createElement("p");
+            par.innerText = data[1].nome + " " + data[1].cognome + " (" + data[1].email + ") fino al " + data[0].dataScadenza;
+            ris.appendChild(par);
         }
     } catch (error) {
         console.error('Error:', error);
@@ -149,7 +148,6 @@ async function init()
         addOrdini(ordini[o]);
     }
 
-    //document.getElementById("cerca-domini").addEventListener("submit", cercaDominio(userId));
     document.getElementById("cerca-domini").addEventListener("submit", (event) => {
         event.preventDefault();
         cercaDominio(userId);
