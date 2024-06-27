@@ -224,6 +224,7 @@ public class DominioResource {
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
             acquisto.setCliente(id);
             acquisto.setId("" + lastIdAcquisto);
+            acquisto.setDataOrdine(LocalDate.now());
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
             acquisto.setQuota(acquisto.getNumAnni() * 10); // applico tariffa fissa di 10 euro all'anno per l'acquisto
@@ -326,6 +327,8 @@ public class DominioResource {
             int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
             acquisto.setCliente(id);
             acquisto.setId("" + lastIdAcquisto);
+            acquisto.setDataOrdine(LocalDate.now());
+
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
             acquisto.setQuota(acquisto.getNumAnni() * 5);

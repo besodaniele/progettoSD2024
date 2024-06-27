@@ -5,9 +5,12 @@ import java.time.LocalDate;
 public class Acquisto {
 
     private String cliente, id,mail,numeroCarta, cvv, nomeIntestatario, cognomeIntestatario,tipo,dominio;
-    private LocalDate dataScadenza;
+    private LocalDate dataScadenza,dataOrdine;
     private int numAnni;
     private double quota;
+
+
+    
     public String getDominio() {
         return dominio;
     }
@@ -102,6 +105,14 @@ public class Acquisto {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public LocalDate getDataOrdine() {
+        return dataOrdine;
+    }
+
+    public void setDataOrdine(LocalDate dataOrdine) {
+        this.dataOrdine = dataOrdine;
     }
 
 }
