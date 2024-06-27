@@ -99,6 +99,16 @@ public class Main {
         PaneDB.getDB().createTable("acquisti", acquisti);
     }
 */
+    private static String[] getFiles() {
+        File folder = new File("./configurationFile");
+        File[] listOfFiles = folder.listFiles();
+        String[] files = new String[listOfFiles.length];
+        for (int i = 0; i < listOfFiles.length; i++) {
+            files[i] = listOfFiles[i].getName().replace(".json", "");
+        }
+        return files;
+    }
+
     private static void setupJson(String name, Map json) {
         PaneDB.getDB().createTable(name, json);
     }
@@ -126,15 +136,13 @@ public class Main {
         setupDomini(domini);
         setupAcquisti(acquisti);
         */
-        if(args.length == 0){
-            System.out.println("Errore: inserire il nome dei file da caricare.");
-            System.exit(1);
-        } else {
-            for (String path : args) {
-                Map rootMap = fetchJsonFromFile("./configurationFile/"+ path + ".json");
-                setupJson(path, rootMap);
-            }
+        String[] files = getFiles();
+
+        for (String file : files) {
+            Map rootMap = fetchJsonFromFile("./configurationFile/"+ file + ".json");
+            setupJson(file, rootMap);
         }
+        
 
         // avvio del server
         startServer();
