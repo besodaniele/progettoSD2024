@@ -54,6 +54,7 @@ async function inviaDati(event)
                 // Gestisci qui la navigazione o l'aggiornamento dell'interfaccia utente
             } else if (response.status === 409) {
                 console.error('Utente già esistente');
+                document.getElementById('err').innerText = 'Utente già esistente';
                 // Gestisci qui la logica per utente già esistente
             } else {
                 throw new Error('Errore nella registrazione dell\'utente');

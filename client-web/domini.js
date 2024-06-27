@@ -2,6 +2,27 @@ const API_URI = "http://localhost:8080";
 
 window.onload = init();
 
+async function lockDominio(dominio, userId)
+{
+    try {
+        const response = await fetch(API_URI + '/dominio/lock/' + dominio + '?id=' + userId, {
+            method: 'GET'
+        });
+
+        if(response.status === 200)
+        {
+            console.log('Dominio bloccato con successo');
+            //window.location.href = "acquisto.html?dominio=" + dominio + "&id=" + userId + "&tipo=acquisto";
+        }
+        else
+        {
+            console.error('Errore nel bloccare il dominio');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 async function cercaDominio(userId)
 {
     const dominio = document.getElementById('dom').value;
@@ -36,6 +57,7 @@ async function ricercaDominio(dominio, userId)
             acquista.type = "button";
             acquista.innerText = "Acquista";
             acquista.addEventListener("click", () => {
+                lockDominio(dominio, userId);
                 window.location.href = "acquisto.html?dominio=" + dominio + "&id=" + userId + "&tipo=acquisto";
             });
             ris.appendChild(acquista);
@@ -47,7 +69,7 @@ async function ricercaDominio(dominio, userId)
 
             let data = await response.json();
             let par = document.createElement("p");
-            par.innerText = data[1].nome + " " + data[1].cognome + " (" + data[1].email + ") fino al " + data[0].dataScadenza;
+            par.innerText = data[1].nome + " " + data[1].cognome + " (" + data[1].email + ") e scade il " + data[0].dataScadenza;
             ris.appendChild(par);
         }
     } catch (error) {
