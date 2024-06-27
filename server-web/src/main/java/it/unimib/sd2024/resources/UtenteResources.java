@@ -68,7 +68,8 @@ public class UtenteResources {
             }
             conn.send("get utenti.*.* where email=" + utente.getEmail());
             response = conn.receive();
-            if (!response.equals("404")) {
+            System.out.println(response);
+            if (!response.equals("{}")) {
 
 
                 //già presente un utente con la stessa email
