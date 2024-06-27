@@ -66,7 +66,7 @@ public class UtenteResources {
                 // utente già bloccato
                 return Response.status(Status.CONFLICT).build();
             }
-            conn.send("get utenti.*.* where email = " + utente.getEmail());
+            conn.send("get utenti.*.* where email=" + utente.getEmail());
             response = conn.receive();
             if (!response.equals("404")) {
 
