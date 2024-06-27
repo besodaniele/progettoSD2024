@@ -57,11 +57,29 @@ public class UtenteResources {
             int lastID = (Integer.parseInt(conn.receive()));
             lastID++;
             conn.send("lock utenti " + lastID + " " + lastID);
-            utente.setId(lastID);
+            String response = conn.receive();
+            if (response.equals("400")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            if (response.equals("409")) {
+                // utente già bloccato
+                return Response.status(Status.CONFLICT).build();
+            }
+            conn.send("get utenti.*.* where email = " + utente.getEmail());
+            response = conn.receive();
+            if (!response.equals("404")) {
 
+
+                //già presente un utente con la stessa email
+                conn.send("unlock utenti " + lastID + " " + lastID);
+                conn.close();
+                return Response.status(Status.CONFLICT).build();
+            }
+            utente.setId(lastID);
             conn.send("insert utenti " + lastID + " " + utente.getId() + " " + utente.getId() + " "
                     + JsonbBuilder.create().toJson(utente));
-            String response = conn.receive();
+            response = conn.receive();
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
             }
@@ -70,12 +88,8 @@ public class UtenteResources {
             }
             conn.send("unlock utenti " + lastID + " " + lastID);
             conn.close();
-            return Response.created(new URI("/utente/" + utente.getId())).build();
-        } catch (JsonbException e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        } catch (IOException e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        } catch (URISyntaxException e) {
+            return Response.created(new URI("http://localhost:8080/utente/" + utente.getId())).build();
+        } catch (JsonbException | IOException | URISyntaxException e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
 
