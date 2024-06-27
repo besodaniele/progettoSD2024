@@ -124,7 +124,7 @@ public class DominioResource {
             if (response.equals("400")) {
                 return Response.status(Status.BAD_REQUEST).build();
             }
-            if (response.equals("404")) {
+            if (response.equals("{}")) {
                 // non esiste quel dominio, neanche scaduto
                 return Response.status(Status.NOT_FOUND).build();
             }
