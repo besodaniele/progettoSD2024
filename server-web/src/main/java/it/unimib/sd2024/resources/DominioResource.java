@@ -158,7 +158,7 @@ public class DominioResource {
                 return Response.status(Status.INTERNAL_SERVER_ERROR).build();
             }
 
-            finalResponse = "[ \"dominio\":"+finalResponse + ",\"utente\":" + response+"]";
+            finalResponse = "["+finalResponse + "," + response+"]";
             return Response.ok(finalResponse).build();
 
         } catch (IOException e) {
