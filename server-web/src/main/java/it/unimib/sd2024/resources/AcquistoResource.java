@@ -1,32 +1,11 @@
 package it.unimib.sd2024.resources;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import it.unimib.sd2024.Connection;
-import it.unimib.sd2024.beans.Acquisto;
-import it.unimib.sd2024.beans.Utente;
-import jakarta.json.JsonException;
-import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.JsonbException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
@@ -35,23 +14,33 @@ import jakarta.ws.rs.core.Response.Status;
 public class AcquistoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@QueryParam ("id") int id) {
+    public Response getAll(@QueryParam("id") int id) {
 
         Connection conn;
         try {
+            // Tentativo di stabilire una connessione
             conn = new Connection();
+            // Invio della richiesta al server per ottenere gli acquisti del cliente
+            // specificato dall'ID
             conn.send("get acquisti.*.* where cliente=" + id);
+            // Ricezione della risposta dal server
             String response = conn.receive();
+            // Chiusura della connessione
             conn.close();
 
+            // Controllo se la risposta è "400", che indica una richiesta errata
             if (response.equals("400")) {
+                // Restituzione di una risposta HTTP con stato 400 BAD REQUEST
                 return Response.status(Status.BAD_REQUEST).build();
             }
+            // Restituzione della risposta del server con stato 200 OK
             return Response.ok(response).build();
+
+            // Gestione delle eccezioni di I/O
         } catch (IOException e) {
+            // Restituzione di una risposta HTTP con stato 500 INTERNAL SERVER ERROR
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
 }

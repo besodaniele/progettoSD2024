@@ -4,23 +4,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import it.unimib.sd2024.Connection;
 import it.unimib.sd2024.beans.Acquisto;
 import it.unimib.sd2024.beans.Dominio;
-import it.unimib.sd2024.beans.Utente;
-import jakarta.json.JsonException;
-import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
-import jakarta.json.bind.JsonbException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -28,7 +18,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.client.ResponseProcessingException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -42,17 +31,18 @@ public class DominioResource {
         Connection conn;
         String query = "";
         try {
+            // Connessione al database
             conn = new Connection();
             query = "lock domini " + dominio + " " + id;
             conn.send(query);
             String response = conn.receive();
             conn.close();
             if (response.equals("400")) {
-                // errore nel database
+                // Errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
             if (response.equals("409")) {
-                // dominio già bloccato
+                // Dominio già bloccato
                 return Response.status(Status.CONFLICT).build();
             }
             return Response.ok().build();
@@ -82,6 +72,7 @@ public class DominioResource {
             }
             return Response.ok().build();
         } catch (IOException e) {
+            // errore nella connessione al server
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -92,13 +83,16 @@ public class DominioResource {
     public Response getAll(@QueryParam("id") int id) {
 
         try {
+            // Connessione al database
             Connection conn = new Connection();
             conn.send("get domini.*.* where proprietario=" + id);
             String response = conn.receive();
             conn.close();
             if (response.equals("400")) {
+                // Errore nella richiesta
                 return Response.status(Status.BAD_REQUEST).build();
             }
+            // Restituisce la risposta ottenuta dal server
             return Response.ok(response).build();
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -158,7 +152,7 @@ public class DominioResource {
                 return Response.status(Status.INTERNAL_SERVER_ERROR).build();
             }
 
-            finalResponse = "["+finalResponse + "," + response+"]";
+            finalResponse = "[" + finalResponse + "," + response + "]";
             return Response.ok(finalResponse).build();
 
         } catch (IOException e) {
@@ -167,7 +161,8 @@ public class DominioResource {
         }
 
     }
-    //aggiunge un dominio
+
+    // aggiunge un dominio
     @Path("/{dominio}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -204,7 +199,7 @@ public class DominioResource {
             d.setDominio(dominio);
             conn.send("getLastIndex domini");
             response = conn.receive();
-            if (response.equals("400")|| response.equals("404")) {
+            if (response.equals("400") || response.equals("404")) {
                 // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
@@ -226,7 +221,7 @@ public class DominioResource {
 
             conn.send("getLastIndex acquisti");
             response = conn.receive();
-            if (response.equals("400")|| response.equals("404")) {
+            if (response.equals("400") || response.equals("404")) {
                 // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
@@ -269,6 +264,7 @@ public class DominioResource {
         }
 
     }
+
     // rinnovo di un dominio
     @Path("/{dominio}")
     @PUT
@@ -324,7 +320,8 @@ public class DominioResource {
             d.setDataRegistrazione(LocalDate.parse(dominioObject.get("dataRegistrazione").toString()));
             d.setDataScadenza(
                     LocalDate.parse(dominioObject.get("dataScadenza").toString()).plusYears(acquisto.getNumAnni()));
-            conn.send("update domini " + d.getId() + " " + d.getDominio() + " " + id + " " + JsonbBuilder.create().toJson(d));
+            conn.send("update domini " + d.getId() + " " + d.getDominio() + " " + id + " "
+                    + JsonbBuilder.create().toJson(d));
 
             response = conn.receive();
             if (response.equals("409")) {
@@ -337,7 +334,7 @@ public class DominioResource {
 
             conn.send("getLastIndex acquisti");
             response = conn.receive();
-            if (response.equals("400")|| response.equals("404")) {
+            if (response.equals("400") || response.equals("404")) {
                 // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
@@ -351,7 +348,8 @@ public class DominioResource {
             acquisto.setQuota(acquisto.getNumAnni() * 5);
             conn.send("lock acquisti " + acquisto.getId() + " " + id);
 
-            conn.send("insert acquisti " + acquisto.getId() + " "+ acquisto.getId() +" " + id + " " + JsonbBuilder.create().toJson(acquisto));
+            conn.send("insert acquisti " + acquisto.getId() + " " + acquisto.getId() + " " + id + " "
+                    + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
             if (response.equals("409")) {
                 // acquisto già registrato, non dovrebbe mai succedere
