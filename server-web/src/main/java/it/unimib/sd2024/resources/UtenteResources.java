@@ -37,7 +37,7 @@ public class UtenteResources {
             Connection conn = new Connection();
             conn.send("getLastIndex utenti");
             String response = conn.receive();
-            if (response.equals("400")|| response.equals("404")) {
+            if (response.equals("400") || response.equals("404")) {
                 // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();
             }
@@ -91,7 +91,7 @@ public class UtenteResources {
             conn.send("get utenti." + id + ".*");
             String response = conn.receive();
 
-            if (response.equals("404")) {
+            if (response.equals("{}")) {
                 return Response.status(Status.NOT_FOUND).build();
             }
             if (response.equals("400")) {
