@@ -2,7 +2,7 @@ const API_URI = "http://localhost:8080";
 
 window.onload = init();
 
-async function lockDominio(dominio, userId)
+async function lockDominio(dominio, userId, tipologia)
 {
     try {
         const response = await fetch(API_URI + '/dominio/lock/' + dominio + '?id=' + userId, {
@@ -12,11 +12,12 @@ async function lockDominio(dominio, userId)
         if(response.status === 200)
         {
             console.log('Dominio bloccato con successo');
-            //window.location.href = "acquisto.html?dominio=" + dominio + "&id=" + userId + "&tipo=acquisto";
+            window.location.href = "acquisto.html?dominio=" + dominio + "&id=" + userId + "&tipo=" + tipologia;
         }
         else
         {
-            console.error('Errore nel bloccare il dominio');
+            console.log('Dominio già bloccato');
+            document.getElementById('err').innerText = 'Il dominio è già stato bloccato';
         }
     } catch (error) {
         console.error('Error:', error);
@@ -57,8 +58,7 @@ async function ricercaDominio(dominio, userId)
             acquista.type = "button";
             acquista.innerText = "Acquista";
             acquista.addEventListener("click", () => {
-                lockDominio(dominio, userId);
-                window.location.href = "acquisto.html?dominio=" + dominio + "&id=" + userId + "&tipo=acquisto";
+                lockDominio(dominio, userId, "acquisto");
             });
             ris.appendChild(acquista);
         }
@@ -114,7 +114,7 @@ async function addDomini(dominio, userId)
         bottone.type = "button";
         bottone.innerText = "Rinnova";
         bottone.addEventListener("click", () => {
-            window.location.href = "acquisto.html?dominio=" + dominio.dominio + "&id=" + userId + "&tipo=rinnovo";
+            lockDominio(dominio.dominio, userId, "rinnovo");
         });
         riga.insertCell().appendChild(bottone);
     }

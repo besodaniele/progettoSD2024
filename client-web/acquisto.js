@@ -77,7 +77,7 @@ async function rinnovaDominio(dominio, id)
             body: JSON.stringify(data),
         });
 
-        if(response.status === 200)
+        if(response.ok)
         {
             console.log('Dominio rinnovato con successo');
             window.location.href = "domini.html?id=" + id;
@@ -118,10 +118,7 @@ async function init()
     });
 
     document.getElementById("indietro").addEventListener("click", () => {
-        if(tipo == "acquisto")
-        {
-            unlockDominio(dominio, id);
-        }
+        unlockDominio(dominio, id);
         window.location.href = "domini.html?id=" + id;
     });
 
