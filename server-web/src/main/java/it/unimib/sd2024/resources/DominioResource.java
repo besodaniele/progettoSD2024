@@ -216,7 +216,6 @@ public class DominioResource {
                 return Response.status(Status.CONFLICT).build();
             } else if (response.equals("400")) {
                 // dominio non valido
-
                 return Response.status(Status.BAD_REQUEST).build();
             }
 
@@ -229,10 +228,12 @@ public class DominioResource {
             acquisto.setTipo("rinnovo");
             acquisto.setQuota(acquisto.getNumAnni() * 10); // applico tariffa fissa di 10 euro all'anno per l'acquisto
                                                            // di un dominio
+            conn.send("lock acquisti " + acquisto.getId() + " " + id);
             conn.send("insert acquisti " + acquisto.getId() + " " + acquisto.getId() + " " + id + " "
                     + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
 
+            conn.send("unlock acquisti " + acquisto.getId() + " " + id);
             query = "unlock domini " + dominio + " " + id;
             conn.send(query);
             response = conn.receive();
@@ -332,6 +333,7 @@ public class DominioResource {
             acquisto.setDominio(dominio);
             acquisto.setTipo("rinnovo");
             acquisto.setQuota(acquisto.getNumAnni() * 5);
+            conn.send("lock acquisti " + acquisto.getId() + " " + id);
 
             conn.send("insert acquisti " + acquisto.getId() + " "+ acquisto.getId() +" " + id + " " + JsonbBuilder.create().toJson(acquisto));
             response = conn.receive();
@@ -342,6 +344,7 @@ public class DominioResource {
                 // formato acquisto non valido
                 return Response.status(Status.BAD_REQUEST).build();
             }
+            conn.send("unlock acquisti " + acquisto.getId() + " " + id);
 
             query = "unlock domini " + dominio + " " + id;
             conn.send(query);
