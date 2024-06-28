@@ -225,7 +225,7 @@ public class DominioResource {
             acquisto.setId("" + lastIdAcquisto);
             acquisto.setDataOrdine(LocalDate.now());
             acquisto.setDominio(dominio);
-            acquisto.setTipo("rinnovo");
+            acquisto.setTipo("acquisto");
             acquisto.setQuota(acquisto.getNumAnni() * 10); // applico tariffa fissa di 10 euro all'anno per l'acquisto
                                                            // di un dominio
             conn.send("lock acquisti " + acquisto.getId() + " " + id);
