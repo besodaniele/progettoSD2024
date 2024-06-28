@@ -73,7 +73,7 @@ public class DominioResource {
             String response = conn.receive();
             conn.close();
             if (response.equals("404")) {
-                // il dominio non esiste
+                // il lock non esiste
                 return Response.status(Status.NOT_FOUND).build();
             }
             if (response.equals("400")) {
