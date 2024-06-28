@@ -13,61 +13,53 @@ async function inviaDati(event)
       cognome: document.getElementById('cognome').value,
       email: document.getElementById('email').value
     };
-  
-    // Invia una richiesta POST al server
-    //try {
-    //    const response = await fetch(API_URI + '/utente/', {
-    //    method: 'POST',
-    //    headers: {
-    //        'Content-Type': 'application/json'
-    //    },
-    //    body: JSON.stringify(data)
-    //    });
 
-    //    if(!response.ok)
-    //    {
-    //        throw new Error("Errore! status: " + response.status);
-    //    }
-
-    //    const responseData = await response.json();
-        //console.log(responseData);
-        //return responseData;
-    //    window.location.href = "id.html?id=" + responseData.id;
-    //} catch (error) {
-    //    console.error('Error:', error);
-    //}
-
-        try {
-            const response = await fetch(API_URI + '/utente/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+    try {
+        // Effettuare una richiesta POST all'API per registrare un nuovo utente
+        const response = await fetch(API_URI + '/utente/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
     
-            if (response.status === 201) {
-                console.log('Utente registrato con successo');
-                const location = response.headers.get("Location");
-                console.log('ID Utente:', location.split("/").pop());
-                window.location.href = "id.html?id=" + location.split("/").pop();
-                // Gestisci qui la navigazione o l'aggiornamento dell'interfaccia utente
-            } else if (response.status === 409) {
-                console.error('Utente già esistente');
-                document.getElementById('err').innerText = 'Utente già esistente';
-                // Gestisci qui la logica per utente già esistente
-            } else {
-                throw new Error('Errore nella registrazione dell\'utente');
-            }
-        } catch (error) {
-            console.error('Errore:', error);
+        // Gestire la risposta dell'API
+        if (response.status == 201) 
+        {
+            console.log('Utente registrato con successo');
+            // Ottenere Location dalla risposta
+            const location = response.headers.get("Location");
+            // Stampare l'ID dell'utente nella console
+            console.log('ID Utente:', location.split("/").pop());
+            // Reindirizzare l'utente alla pagina dell'ID
+            window.location.href = "id.html?id=" + location.split("/").pop();
         }
+        else if (response.status == 409) 
+        {
+            console.error('Utente già esistente');
+            document.getElementById('err').innerText = 'Utente già esistente';
+        }
+        else if(response.status == 400)
+        {
+            console.error('Errore nel client');
+            document.getElementById('err').innerText = 'Errore nei parametri';
+        }
+        else 
+        {
+            console.error('Errore nella registrazione dell\'utente');
+        }
+    } catch (error) {
+        console.error('Errore:', error);
+    }
 };
 
 async function init()
 {
+    // Aggiungere un ascoltatore per la sottomissione del modulo
     document.getElementById("registrazione").addEventListener("submit", inviaDati);
 
+    // Aggiungere un ascoltatore per il link di accesso
     document.getElementById("esci").addEventListener("click", () => {
         window.location.href = "index.html";
     });
