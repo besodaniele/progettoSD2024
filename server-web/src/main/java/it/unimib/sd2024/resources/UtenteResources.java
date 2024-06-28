@@ -50,11 +50,9 @@ public class UtenteResources {
             }
             conn.send("get utenti.*.* where email=" + utente.getEmail());
             response = conn.receive();
-            System.out.println(response);
             if (!response.equals("{}")) {
 
-
-                //già presente un utente con la stessa email
+                // già presente un utente con la stessa email
                 conn.send("unlock utenti " + lastID + " " + lastID);
                 conn.close();
                 return Response.status(Status.CONFLICT).build();
@@ -95,8 +93,6 @@ public class UtenteResources {
                 return Response.status(Status.BAD_REQUEST).build();
             }
             conn.close();
-
-            System.out.println(response);
 
             Utente u = JsonbBuilder.create().fromJson(response, Utente.class);
 
