@@ -163,7 +163,7 @@ public class PaneDB {
     public String getLastIndex(String tableName) {
         Map table = getTable(tableName);
         if (table == null) {
-            return "400";
+            return "404";
         }
         if (table.isEmpty()) {
             return "0";
