@@ -69,6 +69,9 @@ public class DBParser {
                     }
                     
                     Map result = PaneDB.getDB().get(tabellaResult, getSplit[1], getSplit[2]);
+                    if(result == null){
+                        return "{}";
+                    }
                     String resultString = jsonb.toJson(result);
                     return resultString;
 
