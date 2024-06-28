@@ -29,24 +29,6 @@ import jakarta.ws.rs.core.Response.Status;
 
 @Path("utente")
 public class UtenteResources {
-
-    // per testare se viene aggiunto l'utente
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        Connection conn;
-        try {
-            conn = new Connection();
-            conn.send("get utenti.*.*");
-            String response = conn.receive();
-            conn.close();
-            return Response.ok(response).build();
-        } catch (IOException e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }
-
-    }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
