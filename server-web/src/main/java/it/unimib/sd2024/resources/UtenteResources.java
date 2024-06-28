@@ -36,10 +36,15 @@ public class UtenteResources {
         try {
             Connection conn = new Connection();
             conn.send("getLastIndex utenti");
-            int lastID = (Integer.parseInt(conn.receive()));
+            String response = conn.receive();
+            if (response.equals("400")|| response.equals("404")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            int lastID = (Integer.parseInt(response));
             lastID++;
             conn.send("lock utenti " + lastID + " " + lastID);
-            String response = conn.receive();
+            response = conn.receive();
             if (response.equals("400")) {
                 // errore nel database
                 return Response.status(Status.BAD_REQUEST).build();

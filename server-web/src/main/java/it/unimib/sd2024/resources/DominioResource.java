@@ -203,7 +203,12 @@ public class DominioResource {
             Dominio d = new Dominio();
             d.setDominio(dominio);
             conn.send("getLastIndex domini");
-            int lastId = Integer.parseInt(conn.receive()) + 1;
+            response = conn.receive();
+            if (response.equals("400")|| response.equals("404")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            int lastId = Integer.parseInt(response) + 1;
             d.setId("" + lastId);
             d.setProprietario(id);
             d.setDataRegistrazione(LocalDate.now());
@@ -220,7 +225,13 @@ public class DominioResource {
             }
 
             conn.send("getLastIndex acquisti");
-            int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
+            response = conn.receive();
+            if (response.equals("400")|| response.equals("404")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            int lastIdAcquisto = Integer.parseInt(response) + 1;
+
             acquisto.setCliente(id);
             acquisto.setId("" + lastIdAcquisto);
             acquisto.setDataOrdine(LocalDate.now());
@@ -325,7 +336,12 @@ public class DominioResource {
             }
 
             conn.send("getLastIndex acquisti");
-            int lastIdAcquisto = Integer.parseInt(conn.receive()) + 1;
+            response = conn.receive();
+            if (response.equals("400")|| response.equals("404")) {
+                // errore nel database
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+            int lastIdAcquisto = Integer.parseInt(response) + 1;
             acquisto.setCliente(id);
             acquisto.setId("" + lastIdAcquisto);
             acquisto.setDataOrdine(LocalDate.now());
