@@ -1,16 +1,92 @@
 # Progetto Sistemi Distribuiti 2023-2024 - TCP
+Il protocollo ha una struttura richiesta e risposta. Le richieste e le risposte sono formattate come stringhe semplici. 
 
-Documentare qui il protocollo su socket TCP che espone il database.
+# Comandi: 
 
-Come scritto anche nel documento di consegna del progetto, si ha completa libertà su come implementare il protoccolo e i comandi del database. Alcuni suggerimenti sono:
+# GET
 
-1. Progettare un protocollo testuale (tipo HTTP), è più semplice da implementare anche se meno efficiente.
-2. Dare un'occhiata al protocollo di [Redis](https://redis.io/docs/reference/protocol-spec/). Si può prendere ispirazione anche solo in alcuni punti.
+Il comando GET viene utilizzato per ottenere un valore JSON dal database. Il server, per inviare una richiesta di GET al database, deve inviare una stringa strutturato nel seguente modo: 
 
-Di solito il protoccolo e i comandi del database sono due cose diverse. Tuttavia per il progetto, per evitare troppa complessità, si può documentare insieme il protocollo e i comandi implementati nel database.
+```
+"get" "tabella.key.param" "where" "param=value"
+```
 
-La documentazione può variare molto in base al tipo di protocollo che si vuole costruire:
+La `"key"` e `"param"` possono essere `"*"` per indicare di ottenere ALL, la condizione `"where"` può essere optionale. 
 
-* Se è un protocollo testuale simile a quello di Redis, è necessario indicare il formato delle richieste e delle risposte, sia dei comandi sia dei dati.
+L'operazione ritorna una stringa JSON, se non trova nessuna corrispodenza ritorna `"{}"`. 
 
-* Se è un protocollo binario, è necessario specificare bene il formato di ogni pacchetto per le richieste e per le risposte, come vengono codificati i comandi e i dati.
+`400`: BAD REQUEST, `404`: NOT FOUND.
+
+# INSERT 
+
+Il comando INSERT permette al server di memorizzare una stringa JSON con la sua chiave nel database. Il server, per inviare una richiesta di INSERT al database, deve inviare una stringa strutturato nel seguente modo: 
+
+```
+"insert" "tableName" "key" "nameKey" "user" "JSON" 
+```
+
+Dove `"tableName"` è la tabella in cui inserire il JSON, `"key"` è la chiave associata al JSON, `"nameKey"` è la chiave inserito nell'operazione LOCK, `"user"` è l'utente che sta cercando di l'operazione (serve per eseguire il check del LOCK), `"JSON"` è il JSON da inserire. 
+
+`200`: OK, `400`: BAD REQUEST, `409`: CONFLICT. 
+
+# UPDATE 
+
+Il comando UPDATE permette al server di aggiornare un JSON con la chiave associata nel database. Il server, per inviare una richiesta di UPDATE al database, deve inviare una stringa strutturato nel seguente modo: 
+
+```
+"update" "tableName" "key" "nameKey" "user" "JSON"
+```
+
+Dove `"tableName"` è la tabella in cui aggiornare il JSON, `"key"` è la chiave associata al JSON da aggiornare, `"nameKey"` è la chiave inserito nell'operazione LOCK, `"user"` è l'utente che sta cercando di l'operazione (serve per eseguire il check del LOCK), `"JSON"` è il JSON aggiornato. 
+
+`200`: OK, `400`: BAD REQUEST, `404`: NOT FOUND, `409`: CONFLICT
+
+# DELETE 
+
+Il comando DELETE permette al server di eliminare un JSON con la sua chiave associato nel database. Il server, per inviare una richiesta di DELETE al database, deve inviare una stringa strutturato nel seguente modo: 
+
+```
+"delete" "tableName" "key"
+```
+
+Dove `"tableName"` è la tabella da cui eliminare il JSON, `"key"` è la chiave associato al JSON da eliminare. 
+
+`200`: OK, `400`: BAD REQUEST, `404`: NOT FOUND.
+
+# GETLASTINDEX 
+
+Il comando GETLASTINDEX permette al server di ottenere il più grande identificativo di una tabella. Il server, per inviare una richiesta di GETLASTINDEX al database, deve inviare una stringa strutturato nel seguente modo: 
+
+```
+"getLastIndex" "tableName"
+```
+
+Dove `"tableName"` è la tabella in considerazione. 
+
+Se la tabella è vuota ritorna `"0"`. 
+
+`200`:  OK, `400`: BAD REQUEST, `404`: NOT FOUND.
+
+# LOCK
+
+Il comando LOCK permette al server di fare il lock di una risorsa del database con il cliente. Il server, per inviare una richiesta di LOCK al database, deve inviare una stringa strutturato nel seguente modo: 
+
+```
+"lock" "tableName" "nameKey" "user"
+```
+
+Dove `"tableName"` è la tabella della risorsa da legare, `"nameKey"` è il nome della risorsa, `"user"` è l'utente che cerca di fare il lock. 
+
+`200`: OK, `400`: BAD REQUEST, `409`: CONFLICT. 
+
+# UNLOCK
+
+Il comando UNLOCK premettere al server di togliere il lock di una risorsa del database dal cliente. Il server, per inviare una richiesta di UNLOCK al database, deve inviare una stringa strutturato nel seguente modo: 
+
+```
+"unlock" "tableName" "nameKey" "user"
+```
+
+Dove `"tableName"` è la tabella della risorsa con il lock, `"nameKey"` è il nome della risorsa, `"user"` è l'utente che aveva il lock. 
+
+`200`: OK, `400`: BAD REQUEST, `404`: NOT FOUND. 
