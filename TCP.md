@@ -5,21 +5,27 @@ Il protocollo ha una struttura di tipo richiesta e risposta. Le richieste e le r
 
 # GET
 
-Il comando GET viene utilizzato per ottenere un valore JSON dal database. Il server, per inviare una richiesta di GET al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando GET viene utilizzato per ottenere un valore JSON dal database. Il server, per inviare una richiesta di GET al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "get" "tabella.key.param" "where" "param=value"
 ```
 
-La `"key"` e `"param"` possono essere `"*"` per indicare di ottenere tutte le chiavi e/o tutti i parametri delle chiavi (key.param - key.* - *.param - *.*), la condizione `"where"` può essere optionale. 
+La `"key"` e `"param"` possono essere `"*"` per indicare di ottenere tutte le chiavi e/o tutti i parametri delle chiavi \
+le possibili combinazioni sono: 
+- key.param 
+- key.*
+- *.param 
+-  \* . * 
+<!-- -->
+la condizione `"where"` è opzionale. 
+L'operazione ritorna una stringa JSON; se non trova nessuna corrispondenza, ritorna `"{}"`, cioè un JSON vuoto. 
 
-L'operazione ritorna una stringa JSON; se non trova nessuna corrispodenza, ritorna `"{}"`, cioè un JSON vuoto. 
-
-`400`: **BAD REQUEST**, se la richiesta è strutturata male quindi il parser non riesce ad elaborarlo.
+`400`: **BAD REQUEST**, se la richiesta è strutturata male quindi il parser non riesce ad elaborarla.
 
 # INSERT 
 
-Il comando INSERT permette al server di memorizzare una stringa JSON con la sua chiave nel database. Il server, per inviare una richiesta di INSERT al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando INSERT permette al server di memorizzare una stringa JSON con la sua chiave nel database. Il server, per inviare una richiesta di INSERT al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "insert" "tableName" "key" "nameKey" "user" "JSON" 
@@ -40,7 +46,7 @@ Dove `"tableName"` è la tabella in cui inserire il JSON, `"key"` è la chiave a
 
 # UPDATE 
 
-Il comando UPDATE permette al server di aggiornare un JSON con la chiave associata nel database. Il server, per inviare una richiesta di UPDATE al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando UPDATE permette al server di aggiornare un JSON con la chiave associata nel database. Il server, per inviare una richiesta di UPDATE al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "update" "tableName" "key" "nameKey" "user" "JSON"
@@ -63,13 +69,13 @@ Dove `"tableName"` è la tabella in cui aggiornare il JSON, `"key"` è la chiave
 
 # DELETE 
 
-Il comando DELETE permette al server di eliminare un JSON con la sua chiave associata nel database. Il server, per inviare una richiesta di DELETE al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando DELETE permette al server di eliminare un JSON con la sua chiave associata nel database. Il server, per inviare una richiesta di DELETE al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "delete" "tableName" "key"
 ```
 
-Dove `"tableName"` è la tabella da cui eliminare il JSON, `"key"` è la chiave associato al JSON da eliminare. 
+Dove `"tableName"` è la tabella da cui eliminare il JSON, `"key"` è la chiave associata al JSON da eliminare. 
 
 `200`: **OK**, se il JSON con la chiave vengono eliminato con successo dal database. 
 
@@ -79,7 +85,7 @@ Dove `"tableName"` è la tabella da cui eliminare il JSON, `"key"` è la chiave 
 
 # GETLASTINDEX 
 
-Il comando GETLASTINDEX permette al server di ottenere l'identificativo più grande di una tabella. Il server, per inviare una richiesta di GETLASTINDEX al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando GETLASTINDEX permette al server di ottenere l'identificativo più grande di una tabella. Il server, per inviare una richiesta di GETLASTINDEX al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "getLastIndex" "tableName"
@@ -97,7 +103,7 @@ Se la tabella è vuota ritorna `"0"`.
 
 # LOCK
 
-Il comando LOCK permette al server di bloccare una risorsa del database per un cliente. Il server, per inviare una richiesta di LOCK al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando LOCK permette al server di bloccare una risorsa del database per un cliente. Il server, per inviare una richiesta di LOCK al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "lock" "tableName" "nameKey" "user"
@@ -113,7 +119,7 @@ Dove `"tableName"` è la tabella della risorsa da bloccare, `"nameKey"` è il no
 
 # UNLOCK
 
-Il comando UNLOCK premettere al server di rimuovere il blocco di una risorsa del database da un cliente. Il server, per inviare una richiesta di UNLOCK al database, deve inviare una stringa strutturato nel seguente modo: 
+Il comando UNLOCK premettere al server di rimuovere il blocco di una risorsa del database da un cliente. Il server, per inviare una richiesta di UNLOCK al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
 "unlock" "tableName" "nameKey" "user"
@@ -125,4 +131,4 @@ Dove `"tableName"` è la tabella della risorsa precedentemente bloccata, `"nameK
 
 `400`: **BAD REQUEST**, se la richiesta è strutturata male. 
 
-`404`: **NOT FOUND**, se la risolsa non è bloccata, quindi non esiste un lock su questa risorsa. 
+`404`: **NOT FOUND**, se la risorsa non è bloccata, quindi non esiste un lock su questa risorsa. 
