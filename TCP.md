@@ -18,7 +18,7 @@ le possibili combinazioni sono:
 - *.param 
 -  \* . * 
 <!-- -->
-la condizione `"where"` è opzionale. 
+la condizione `"where"` è opzionale. \
 L'operazione ritorna una stringa JSON; se non trova nessuna corrispondenza, ritorna `"{}"`, cioè un JSON vuoto. 
 
 `400`: **BAD REQUEST**, se la richiesta è strutturata male quindi il parser non riesce ad elaborarla.
