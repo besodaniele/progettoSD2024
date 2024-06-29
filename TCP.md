@@ -8,8 +8,14 @@ Il protocollo ha una struttura di tipo richiesta e risposta. Le richieste e le r
 Il comando GET viene utilizzato per ottenere un valore JSON dal database. Il server, per inviare una richiesta di GET al database, deve inviare una stringa strutturata nel seguente modo: 
 
 ```
-"get" "tabella.key.param" "where" "param=value"
+"get" "tabella.key.param"
 ```
+**or**
+```
+"get" "tabella.key.param" "where" "param1=value"
+```
+
+Dove `"tabella.key.param"` indica il parametro della chiave della tabella da ottenere, `"param1"` è il parametro da controllare (non necessariamente uguale a `"param"`), `"value"` è il valore di controllo. 
 
 La `"key"` e `"param"` possono essere `"*"` per indicare di ottenere tutte le chiavi e/o tutti i parametri delle chiavi \
 le possibili combinazioni sono: 
